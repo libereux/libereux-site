@@ -264,6 +264,10 @@ export const frictionPoints = [
 
 export const faqs = [
   {
+    q: "Is the assistant on this website real AI?",
+    a: "Yes. It is a live assistant, built the way we build them for clients. It can review your website, draft an AI plan for your business, plan a smart home and prepare your consultation request. It shows every step it takes, and it never sends anything without your OK.",
+  },
+  {
     q: "Do I need to understand AI before we talk?",
     a: "No. That is our job. Tell us how your business runs and what frustrates you, and we will explain what AI can and cannot do for you in plain language.",
   },

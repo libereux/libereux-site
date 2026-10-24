@@ -26,6 +26,15 @@ The domain stays registered at Squarespace. Only its DNS records change. No tran
 
 Until this is done, the form shows a message asking people to email holdings@libereux.com directly.
 
+## 3b. Turn on the live assistant
+
+1. Create an API key at console.anthropic.com (Libereux account, holdings@libereux.com).
+2. In the Console, set a **monthly spend limit** first. This caps the cost no matter how much traffic arrives.
+3. In Vercel, add `ANTHROPIC_API_KEY` = the key. Optional: `ASSISTANT_MODEL=claude-haiku-5-5` for lower cost per chat.
+4. Redeploy. Until the key is set, the assistant shows a friendly "switched off" message with a button to book a consultation.
+
+Built-in protections: 40 messages per visitor per hour, requests only from libereux.com, messages capped at 2,000 characters, and the website scanner refuses private or internal network addresses.
+
 ## 4. Point the domain
 
 No tenants use the old portal, so the domain can move as soon as you approve the Vercel preview. Old portal URLs temporarily redirect to the property management page until the portals are rebuilt (see PORTAL_PLAN.md).

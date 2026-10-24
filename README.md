@@ -19,6 +19,7 @@ npm run lint
 - `components/`: header, footer, contact form, and one interactive demo per service:
   `HeroDemo` (AI assistant chat), `OpportunityFinder` (AI strategy), `StepsToYes` (websites and apps),
   `SmartHomeScene` (smart home), `SearchPreview` (SEO).
+- `components/assistant/` and `lib/assistant/`: the live AI assistant. `prompt.ts` holds its knowledge and house rules (built from `lib/content.ts`), `tools.ts` its six tools, `scan.ts` the website scanner, `app/api/assistant/route.ts` the streaming endpoint. Run `ASSISTANT_MOCK=1 SCAN_ALLOW_PRIVATE=1 npm run dev` to test without an API key.
 - `proxy.ts`: the one old URL (`/Procurement`) that needs an exact-case redirect.
 - `app/api/contact/route.ts`: sends the consultation form by email (needs `RESEND_API_KEY`).
 - `next.config.ts`: redirects from the old site's URLs and security headers.

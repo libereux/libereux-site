@@ -43,6 +43,14 @@ export default function PrivacyPage() {
               the pages you visit, to keep the site secure and working.
             </p>
 
+            <h2>The website assistant</h2>
+            <p className="muted">
+              When you chat with the assistant on this site, your messages are processed by our AI service
+              provider to generate replies. We do not store the conversation on our servers. If you ask it to
+              review a website, it visits that public address and reads the page. It only sends us your details
+              when you review a consultation request and press Send yourself.
+            </p>
+
             <h2>How we use it</h2>
             <p className="muted">
               We use your information only to reply to you, arrange and hold your consultation, and

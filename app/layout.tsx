@@ -6,6 +6,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import { AssistantProvider } from "@/components/assistant/Assistant";
 import { services, site } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -90,9 +91,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <JsonLd data={orgLd} />
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
+        <AssistantProvider>
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
+        </AssistantProvider>
       </body>
     </html>
   );
