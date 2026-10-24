@@ -28,12 +28,12 @@ npm run lint
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
 - `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
 - `app/terms/`, `app/refund-policy/`: published terms and refund policy (approved by James 2026-10-24, awaiting legal review). `docs/TERMS_AND_REFUNDS_DRAFT.md` is the original draft.
-- `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Soft launch since 2026-10-24: `pricingLive = true`, `pricingPublic = false` (direct link only, noindex, no sitemap or menu entry).
+- `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Public since 2026-10-24: `pricingLive = true`, `pricingPublic = true`. Set `pricingPublic = false` to return to soft launch (direct link only, noindex, no sitemap or menu entry).
 
 ## House rules for copy
 
 - No em dashes.
-- No prices until pricing is final. Every engagement is scoped after the free 30-minute consultation. Approved Pricing v1 is in soft launch (`lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`). Do not show prices on public pages, menus or the sitemap until `pricingPublic` is switched on.
+- Prices come only from `lib/pricing.ts` (approved Pricing v1, public since 2026-10-24; see `docs/PRICING_V1_DRAFT.md`). Do not hard-code a price anywhere else. Custom and complex work is still scoped after the free 30-minute consultation.
 - Never name build platforms or AI tools in anything client-facing. Use outcome language.
 - No case studies, testimonials or results without the client's written permission and James's approval of the wording. Never mention FASH.
 - Every promise on the site needs James's approval.

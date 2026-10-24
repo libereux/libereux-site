@@ -46,6 +46,9 @@ export default function Home() {
               <Link href="/contact" className="btn btn-primary">
                 Book a free consultation
               </Link>
+              <Link href="/packages" className="btn btn-ghost">
+                See packages and prices
+              </Link>
               <Link href="/website-check" className="btn btn-ghost">
                 Check your website free
               </Link>
@@ -195,7 +198,7 @@ export default function Home() {
         <div className="wrap">
           <div className="section-head">
             <h2 id="how-title">How it works</h2>
-            <p className="lede">You always know what happens next, and what it costs, before work starts.</p>
+            <p className="lede">You always know what happens next, and what it costs, before work starts. Fixed-price packages are on the Packages page.</p>
           </div>
           <Steps />
         </div>

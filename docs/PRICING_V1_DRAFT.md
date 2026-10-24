@@ -1,6 +1,6 @@
 # Pricing v1 (approved, soft launch)
 
-Status: James Collins approved the prices, Stripe as the processor, the custom-quote rule for unlisted
+Status: PUBLIC since 2026-10-24 (James Collins chose to launch right after the copy update, before the test order and legal review; `pricingPublic = true`). James Collins approved the prices, Stripe as the processor, the custom-quote rule for unlisted
 countries, and the terms wording on 2026-10-24. Checkout is switched on as a soft launch:
 `pricingLive = true` and `pricingPublic = false` in `lib/pricing.ts`. `/packages` works for anyone with
 the link, but it is not in the sitemap, not linked from the menu, and is marked noindex. To launch
