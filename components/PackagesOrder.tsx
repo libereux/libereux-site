@@ -23,6 +23,7 @@ export default function PackagesOrder() {
   const [flags, setFlags] = useState<string[]>([]);
   const [extras, setExtras] = useState<string[]>([]);
   const [wantsQuote, setWantsQuote] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
   const tier = tierForCountry(country);
@@ -44,7 +45,7 @@ export default function PackagesOrder() {
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, country, packages: picked, flags, addOns: extras, wantsQuote }),
+        body: JSON.stringify({ ...data, country, packages: picked, flags, addOns: extras, wantsQuote, agreed }),
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string; kind?: string; url?: string };
       if (!res.ok) throw new Error(body.error || "Request failed");
@@ -57,6 +58,7 @@ export default function PackagesOrder() {
       setFlags([]);
       setExtras([]);
       setWantsQuote(false);
+      setAgreed(false);
       setStatus({
         kind: "ok",
         message: "Request sent. You will receive a written quote within 24 hours.",
@@ -197,13 +199,23 @@ export default function PackagesOrder() {
         </p>
       )}
 
+      {!needsQuote && tier && (
+        <div className="field">
+          <label htmlFor="agree">
+            <input id="agree" type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required />{" "}
+            I have read and agree to the <Link href="/terms">terms of service</Link> and the{" "}
+            <Link href="/refund-policy">refund policy</Link>.
+          </label>
+        </div>
+      )}
+
       <p className="consent">
         We use your details only to reply to you and deliver your order. See our <Link href="/privacy">privacy policy</Link>.
         Prefer to talk first? <Link href="/contact">Book a free consultation</Link>.
       </p>
 
       <div>
-        <button type="submit" className="btn btn-primary" disabled={status.kind === "sending" || country === ""}>
+        <button type="submit" className="btn btn-primary" disabled={status.kind === "sending" || country === "" || (!needsQuote && !agreed)}>
           {status.kind === "sending" ? "Sending" : needsQuote ? "Send my request for a written quote" : `Pay ${money(deposit)} deposit`}
         </button>
       </div>
