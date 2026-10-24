@@ -35,7 +35,8 @@ export default function AboutPage() {
             </p>
             <p className="muted">
               My background is in enterprise project management and Agile delivery, keeping complex
-              technology programs on track. I bring the same discipline to every engagement, whatever
+              technology programs on track inside large organizations, including The Walt Disney
+              Company, Inspire Brands and The Home Depot. I bring the same discipline to every engagement, whatever
               its size: understand the business first, scope it honestly, and deliver what was agreed.
             </p>
             <p className="muted">
