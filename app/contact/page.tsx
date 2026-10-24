@@ -29,7 +29,7 @@ export default function ContactPage() {
           <div className="prose">
             <h2>What happens next</h2>
             <ol className="plain-list">
-              <li>We reply to set up a time that suits your time zone.</li>
+              <li>Pick a time that suits your time zone and you get a calendar invite with a video link straight away. If none fits, send your details and we reply to find one.</li>
               <li>We talk about your business, your goals and what is slowing you down.</li>
               <li>You leave with clear next steps. If you want our help, you get a written scope with the price before any work starts.</li>
             </ol>

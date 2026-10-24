@@ -22,6 +22,7 @@ npm run lint
 - `app/website-check/`, `components/WebsiteCheck.tsx`, `lib/website-check/`: the free website check. 14 weighted checks, plain-language report, shareable link, print to PDF. Runs on free serverless functions with no paid services. Private and internal network addresses are blocked.
 - The earlier live AI assistant is archived on the branch `archive/assistant-v1` (it needs a paid API key).
 - `proxy.ts`: the one old URL (`/Procurement`) that needs an exact-case redirect.
+- `lib/booking/`, `app/api/slots/`, `app/api/book/`, and the time picker in `components/ContactForm.tsx`: online consultation booking with Google Calendar and Google Meet, no paid services. Setup and hours: `docs/BOOKING_SETUP.md`.
 - `app/api/contact/route.ts`: sends the consultation form by email (needs `RESEND_API_KEY`).
 - `next.config.ts`: redirects from the old site's URLs and security headers.
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
