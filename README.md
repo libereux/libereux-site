@@ -27,6 +27,7 @@ npm run lint
 - `next.config.ts`: redirects from the old site's URLs and security headers.
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
 - `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
+- `docs/TERMS_AND_REFUNDS_DRAFT.md`: draft terms and refund policy for James and a legal reviewer. Not published.
 - `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Built but hidden: `pricingLive = false`. Not live.
 
 ## House rules for copy

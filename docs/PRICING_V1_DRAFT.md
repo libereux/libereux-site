@@ -88,7 +88,7 @@ webhook rejected, mismatch flagged). Not tested against real Stripe or real emai
 2. In Netlify, add `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. In Stripe, add a webhook endpoint
    at `https://libereux.com/api/stripe-webhook` for `checkout.session.completed`. Use test keys first.
 3. The cross-border legal and accounting review clears checkout for each market.
-4. Publish terms and a refund policy and link them from `/packages`. Update `/privacy` to cover order
+4. Approve the draft in `docs/TERMS_AND_REFUNDS_DRAFT.md`, have it legally reviewed, publish it as `/terms` and link it from `/packages`. Update `/privacy` to cover order
    details and payment processing. These need James's approval of the wording.
 5. Olive has the order intake, scope confirmation template and deposit tracking ready in Drive.
 6. Update the site copy that still says every engagement is scoped after a consultation: the FAQ
