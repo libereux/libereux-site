@@ -1,136 +1,148 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+
+type Hotspot = {
+  device: string;
+  tip: string;
+  x: number; // percent of image width
+  y: number; // percent of image height
+};
 
 type Scene = {
   id: string;
   label: string;
-  light: number; // 0 to 1
-  warm: boolean;
-  blinds: number; // 0 open to 1 closed
-  locked: boolean;
-  temp: number;
-  tv: boolean;
-  sky: string;
+  src: string;
+  alt: string;
   summary: string[];
+  hotspots: Hotspot[];
 };
 
+/*
+  One plain example room, shown today and then as four scenes. All images share the same
+  camera and room, so the crossfade reads as the room changing. Hotspot positions are
+  percentages, so they hold at any screen width.
+*/
 const scenes: Scene[] = [
+  {
+    id: "today",
+    label: "Your space today",
+    src: "/scenes/base.webp",
+    alt: "A plain living room with a sofa, coffee table and floor lamp, and no smart devices yet.",
+    summary: ["A plain room, no smart devices", "Tap a scene to see the same room transform"],
+    hotspots: [],
+  },
   {
     id: "morning",
     label: "Good morning",
-    light: 0.55,
-    warm: false,
-    blinds: 0,
-    locked: false,
-    temp: 22,
-    tv: false,
-    sky: "#9fd3f2",
-    summary: ["Blinds open", "Lights at half, cool white", "Heating to 22°C", "Front door unlocked"],
+    src: "/scenes/good-morning.webp",
+    alt: "The same living room at sunrise with the blinds open, warm light on, a smart thermostat on the wall and a smart speaker on the coffee table.",
+    summary: ["Blinds open with the sunrise", "Thermostat warms to 21°C", "Kitchen lights ready", "Speaker reads your day"],
+    hotspots: [
+      { device: "Smart blinds", tip: "Open slowly at 6:30 with the sunrise.", x: 12, y: 35 },
+      { device: "Smart thermostat", tip: "Warms the house to 21 degrees before you get up.", x: 41, y: 40 },
+      { device: "Kitchen lights and speaker", tip: "Kitchen lights come on and the speaker reads your day.", x: 51, y: 71 },
+    ],
   },
   {
     id: "movie",
     label: "Movie night",
-    light: 0.18,
-    warm: true,
-    blinds: 1,
-    locked: true,
-    temp: 21,
-    tv: true,
-    sky: "#24365c",
-    summary: ["Blinds closed", "Lights dimmed, warm", "TV on", "Front door locked"],
+    src: "/scenes/movie-night.webp",
+    alt: "The same living room in the evening with the blinds closed, lights dimmed and a television glowing on the wall.",
+    summary: ["Blinds closed", "Lights dimmed, warm", "TV and sound on", "Thermostat set for comfort"],
+    hotspots: [
+      { device: "Smart blinds", tip: "Close to block the glare.", x: 8, y: 30 },
+      { device: "Smart lighting", tip: "Overhead lights off, the lamp dims low.", x: 21, y: 43 },
+      { device: "TV and sound", tip: "TV and sound switch on and ready to play.", x: 72, y: 35 },
+    ],
   },
   {
     id: "away",
     label: "Away",
-    light: 0,
-    warm: false,
-    blinds: 0.5,
-    locked: true,
-    temp: 17,
-    tv: false,
-    sky: "#c7e3f4",
-    summary: ["Lights off", "Eco temperature 17°C", "Front door locked", "Alerts sent to your phone"],
+    src: "/scenes/away.webp",
+    alt: "The same living room in daylight with the lights off, a smart lock on the front door and a small security camera in the corner.",
+    summary: ["Lights off", "Eco temperature", "Front door locked", "Camera armed, alerts to your phone"],
+    hotspots: [
+      { device: "Smart lock", tip: "The door locks itself when you leave.", x: 37, y: 45 },
+      { device: "Smart thermostat", tip: "Drops to eco mode to save energy.", x: 42, y: 40 },
+      { device: "Security camera", tip: "Arms and alerts your phone if anything moves.", x: 58, y: 25 },
+    ],
   },
   {
     id: "night",
     label: "Good night",
-    light: 0.06,
-    warm: true,
-    blinds: 1,
-    locked: true,
-    temp: 19,
-    tv: false,
-    sky: "#111827",
-    summary: ["Everything off but a night light", "Blinds closed", "Doors locked", "Cooler 19°C for sleep"],
+    src: "/scenes/good-night.webp",
+    alt: "The same living room late at night with the blinds closed, a low lamp, a night light along the floor and the front door locked.",
+    summary: ["Everything off but a night light", "Blinds closed", "Door locked", "Cooler 18°C for sleep"],
+    hotspots: [
+      { device: "Smart lock", tip: "Checks that the door is locked.", x: 37, y: 44 },
+      { device: "Night light path", tip: "A soft light guides you if you get up.", x: 73, y: 65 },
+      { device: "Smart thermostat", tip: "Cools to 18 degrees for better sleep.", x: 43, y: 41 },
+    ],
   },
 ];
 
 export default function SmartHomeScene() {
-  const [id, setId] = useState("movie");
+  const [id, setId] = useState("today");
+  const [openTip, setOpenTip] = useState<number | null>(null);
   const s = scenes.find((x) => x.id === id)!;
-  const lampColor = s.warm ? "#ffb35c" : "#fff4d6";
+  const tip = openTip === null ? null : s.hotspots[openTip];
+
+  function choose(next: string) {
+    setId(next);
+    setOpenTip(null);
+  }
 
   return (
     <div className="scene">
       <div className="scene-buttons" role="group" aria-label="Choose a scene">
         {scenes.map((x) => (
-          <button key={x.id} type="button" className="chip chip-dark" aria-pressed={x.id === id} onClick={() => setId(x.id)}>
+          <button key={x.id} type="button" className="chip chip-dark" aria-pressed={x.id === id} onClick={() => choose(x.id)}>
             {x.label}
           </button>
         ))}
       </div>
 
       <div className="scene-stage">
-        <svg viewBox="0 0 480 300" role="img" aria-label={`Sample living room in ${s.label} mode: ${s.summary.join(", ")}`}>
-          <defs>
-            <radialGradient id="glow" cx="50%" cy="0%" r="80%">
-              <stop offset="0%" stopColor={lampColor} stopOpacity={0.9 * s.light} />
-              <stop offset="100%" stopColor={lampColor} stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          {/* Room */}
-          <rect x="0" y="0" width="480" height="300" fill="#e7e2da" />
-          <rect x="0" y="0" width="480" height="300" fill="#111827" style={{ opacity: 0.62 - s.light * 0.6, transition: "opacity .6s" }} />
-          <rect x="0" y="232" width="480" height="68" fill="#b98f6a" />
-          <rect x="0" y="232" width="480" height="68" fill="#111827" style={{ opacity: 0.5 - s.light * 0.45, transition: "opacity .6s" }} />
-          {/* Window */}
-          <rect x="40" y="46" width="130" height="120" rx="4" fill={s.sky} style={{ transition: "fill .6s" }} />
-          <rect x="40" y="46" width="130" height={120 * s.blinds} fill="#d9cfc2" style={{ transition: "height .6s" }} />
-          {Array.from({ length: 8 }).map((_, i) => (
-            <line key={i} x1="40" x2="170" y1={46 + i * 15} y2={46 + i * 15} stroke="#bfb3a3" strokeWidth="1" opacity={i * 15 < 120 * s.blinds ? 1 : 0} />
+        <div className="scene-frame">
+          {scenes.map((x, i) => (
+            <Image
+              key={x.id}
+              src={x.src}
+              alt={x.id === id ? x.alt : ""}
+              aria-hidden={x.id === id ? undefined : true}
+              fill
+              unoptimized
+              loading="eager"
+              sizes="(max-width: 900px) 100vw, 720px"
+              className={x.id === id ? "scene-img scene-img-on" : "scene-img"}
+              preload={i === 0}
+            />
           ))}
-          <rect x="40" y="46" width="130" height="120" rx="4" fill="none" stroke="#fff" strokeWidth="6" />
-          {/* Ceiling light glow */}
-          <rect x="0" y="0" width="480" height="300" fill="url(#glow)" style={{ transition: "all .6s" }} />
-          <line x1="300" y1="0" x2="300" y2="34" stroke="#555" strokeWidth="2" />
-          <path d="M282 34 h36 l-8 14 h-20z" fill="#2a2f3a" />
-          <circle cx="300" cy="50" r="6" fill={s.light > 0 ? lampColor : "#666"} />
-          {/* TV */}
-          <rect x="210" y="104" width="150" height="86" rx="4" fill="#111827" />
-          <rect x="216" y="110" width="138" height="74" rx="2" fill={s.tv ? "#3b82f6" : "#1f2937"} style={{ transition: "fill .4s" }} />
-          {s.tv && <path d="M270 132 l22 14 -22 14z" fill="#fff" opacity=".9" />}
-          {/* Sofa */}
-          <rect x="196" y="196" width="180" height="40" rx="12" fill="#1b2a4a" />
-          <rect x="186" y="186" width="24" height="54" rx="10" fill="#24365c" />
-          <rect x="362" y="186" width="24" height="54" rx="10" fill="#24365c" />
-          {/* Door */}
-          <rect x="410" y="96" width="56" height="136" rx="3" fill="#8a6748" />
-          <circle cx="420" cy="166" r="4" fill="#d6c3a5" />
-          <g transform="translate(424 120)">
-            <rect x="0" y="0" width="30" height="30" rx="8" fill={s.locked ? "#16a34a" : "#ff6b35"} style={{ transition: "fill .4s" }} />
-            <path d={s.locked ? "M9 14 v-4 a6 6 0 0 1 12 0 v4" : "M9 14 v-4 a6 6 0 0 1 11 -2"} fill="none" stroke="#fff" strokeWidth="2.2" />
-            <rect x="7" y="14" width="16" height="10" rx="2" fill="#fff" />
-          </g>
-          {/* Thermostat */}
-          <circle cx="190" cy="80" r="17" fill="#fff" stroke="#c9ced6" strokeWidth="2" />
-          <text x="190" y="85" textAnchor="middle" fontSize="13" fontWeight="700" fill="#111827" fontFamily="sans-serif">
-            {s.temp}°
-          </text>
-          {/* Floor lamp */}
-          <line x1="96" y1="232" x2="96" y2="196" stroke="#2a2f3a" strokeWidth="3" />
-          <path d="M84 196 h24 l-5 -16 h-14z" fill={s.light > 0.1 ? lampColor : "#4b5563"} style={{ transition: "fill .6s" }} />
-        </svg>
+
+          {/* Re-keyed on every scene change so the dots fade in one after another. */}
+          <div className="scene-dots" key={s.id}>
+            {s.hotspots.map((h, i) => (
+              <button
+                key={h.device}
+                type="button"
+                className="scene-dot"
+                style={{ left: `${h.x}%`, top: `${h.y}%`, ["--i" as string]: i }}
+                aria-label={`${h.device}: ${h.tip}`}
+                aria-pressed={openTip === i}
+                onClick={() => setOpenTip(openTip === i ? null : i)}
+              />
+            ))}
+          </div>
+
+          {tip && (
+            <div className="scene-tip" role="status">
+              <strong>{tip.device}</strong>
+              <span>{tip.tip}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <ul className="scene-summary" aria-live="polite">
@@ -138,6 +150,8 @@ export default function SmartHomeScene() {
           <li key={line}>{line}</li>
         ))}
       </ul>
+
+      <p className="scene-note">Illustrative example. Devices and automations shown are examples of what can be set up.</p>
     </div>
   );
 }
