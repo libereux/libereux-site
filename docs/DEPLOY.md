@@ -57,3 +57,16 @@ Until this is done, the form asks people to email holdings@libereux.com directly
 Netlify's free plan includes monthly allowances for bandwidth, builds and function runs. A small
 business site with a website check tool should sit well inside them. Check the current limits on
 your Netlify billing page after signing up, and turn on usage notifications so nothing surprises you.
+
+## Turning on packages and Stripe checkout (not yet)
+
+Only do this after the blockers in `docs/PRICING_V1_DRAFT.md` are cleared.
+
+1. In Netlify, Site configuration, Environment variables, add:
+   - `STRIPE_SECRET_KEY` = a Stripe secret key (use a test key first)
+   - `STRIPE_WEBHOOK_SECRET` = the signing secret of the webhook endpoint
+2. In Stripe, Developers, Webhooks, add `https://libereux.com/api/stripe-webhook` for the event
+   `checkout.session.completed`.
+3. Stripe charges a fee per transaction and no monthly fee for this setup. That is a cost of sales,
+   not a running cost.
+4. Place a test order, check the emails, then change `pricingLive` to `true` in `lib/pricing.ts` and deploy.

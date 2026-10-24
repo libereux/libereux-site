@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { services, site } from "@/lib/content";
+import { pricingLive } from "@/lib/pricing";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date("2026-10-24");
@@ -8,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/services", 0.9],
     ["/contact", 0.8],
     ["/website-check", 0.8],
+    ...(pricingLive ? ([["/packages", 0.9]] as [string, number][]) : []),
     ["/how-it-works", 0.7],
     ["/about", 0.6],
     ["/procurement", 0.4],
