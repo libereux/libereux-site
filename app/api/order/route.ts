@@ -84,6 +84,11 @@ export async function POST(request: Request) {
     return Response.json({ ok: true, kind: "quote" });
   }
 
+  // Checkout needs the client's agreement to the terms and refund policy.
+  if (body.agreed !== true) {
+    return Response.json({ error: "Please agree to the terms and refund policy to continue." }, { status: 400 });
+  }
+
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) {
     console.error("STRIPE_SECRET_KEY is not set; checkout unavailable");
@@ -107,6 +112,8 @@ export async function POST(request: Request) {
       `Total ${priceFor(p, tier)} USD. Balance due at handover. Written scope sent before work starts.`,
     );
   });
+  form.set("metadata[terms_version]", "2026-10-24");
+  form.set("metadata[terms_accepted_at]", new Date().toISOString());
   form.set("metadata[country]", country);
   form.set("metadata[tier]", String(tier));
   form.set("metadata[packages]", packs.map((p) => p.id).join(",").slice(0, 480));

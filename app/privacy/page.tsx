@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: og("/privacy"),
 };
 
-// DRAFT FOR LEGAL REVIEW. Approved direction (2026-10-21): publish only after legal review.
+// Order and payment details added 2026-10-24. Direction (2026-10-21): have this reviewed by a legal professional.
 export default function PrivacyPage() {
   return (
     <>
@@ -41,6 +41,15 @@ export default function PrivacyPage() {
             <p className="muted">
               Our hosting provider records basic technical information, such as your browser type and
               the pages you visit, to keep the site secure and working.
+            </p>
+
+            <h2>Orders and payments</h2>
+            <p className="muted">
+              When you order a package, we collect your name, email, business name, billing country, the packages you
+              chose and any notes you add. Payments are processed by Stripe. Stripe collects your card details and
+              billing address directly; we never see or store your card number. We receive your name, email, billing
+              country and the amount paid. We keep order records for as long as we need them to deliver your order, keep
+              our accounts, and meet legal duties. Stripe&apos;s own privacy policy applies to the information it collects.
             </p>
 
             <h2>The free website check</h2>

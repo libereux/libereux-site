@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/procurement", 0.4],
     ["/real-estate", 0.4],
     ["/privacy", 0.1],
+    ["/terms", 0.1],
+    ["/refund-policy", 0.1],
   ];
   return [
     ...pages.map(([path, priority]) => ({ url: `${site.url}${path}`, lastModified, priority })),

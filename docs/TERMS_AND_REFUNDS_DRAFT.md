@@ -1,6 +1,8 @@
-# Terms and refund policy (DRAFT for James and a legal reviewer)
+# Terms and refund policy (approved wording, now published)
 
-Status: first draft written 2026-10-24. This is not legal advice and is not published anywhere.
+Status: James approved the defaults on 2026-10-24. The text is published at `/terms` and `/refund-policy`
+(`app/terms/page.tsx`, `app/refund-policy/page.tsx`). Those pages are the source of truth now; this file is the
+original draft. A legal professional has not reviewed it yet. Original note: first draft written 2026-10-24. This is not legal advice and is not published anywhere.
 Items in [brackets] are choices for James to make. Have a lawyer review it before it goes on the
 site, especially for the countries in the price tiers, and check what each country's consumer law
 requires. When approved, it becomes `/terms` and the checkout page links to it.
