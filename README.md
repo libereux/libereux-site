@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# libereux.com
 
-## Getting Started
+Website for Libereux Holdings, LLC, led by Digital Solutions.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `lib/content.ts`: prices, case studies, FAQs, service areas. Edit copy here and it updates everywhere.
+- `app/`: one folder per page. `app/sitemap.ts`, `app/robots.ts` and `app/opengraph-image.tsx` handle SEO.
+- `components/`: header, footer, hero demo, pricing, contact form.
+- `app/api/contact/route.ts`: sends the consultation form by email (needs `RESEND_API_KEY`).
+- `next.config.ts`: redirects from the old site's URLs and security headers.
+- `docs/DEPLOY.md`: GitHub, Vercel and Squarespace DNS steps.
+- `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## House rules for copy
 
-## Learn More
+- No em dashes.
+- Never name the build platform in anything client-facing. Use outcome language.
+- Show real prices. Do not invent client details; case studies come from the Digital Solutions Marketing folder in Drive.
 
-To learn more about Next.js, take a look at the following resources:
+## Design tokens
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ink `#17222D`, signal orange `#EE6A1F`, deep orange `#B44A0E` for small text, paper `#F5F7F8`, steel `#56626C`.
+Headlines: Archivo at 125% width. Body: Atkinson Hyperlegible, 19px base, chosen for older and low-vision readers.
