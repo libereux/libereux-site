@@ -27,11 +27,10 @@ export async function POST(request: Request) {
   const fields: [string, string][] = [
     ["Name", name],
     ["Email", email],
-    ["Phone", clean(body.phone, 60)],
-    ["Business", clean(body.business, 200)],
-    ["Type", clean(body.type, 80)],
-    ["Plan", clean(body.plan, 40)],
-    ["Message", clean(body.message, 4000)],
+    ["Phone or WhatsApp", clean(body.phone, 60)],
+    ["Based in", clean(body.location, 120)],
+    ["Help with", clean(body.service, 60)],
+    ["About the business", clean(body.message, 4000)],
   ];
 
   const key = process.env.RESEND_API_KEY;

@@ -11,8 +11,8 @@ export default function NotFound() {
             <Link href="/" className="btn btn-primary">
               Go to the home page
             </Link>
-            <Link href="/pricing" className="btn btn-ghost">
-              See prices
+            <Link href="/services" className="btn btn-ghost">
+              See our services
             </Link>
           </div>
         </div>

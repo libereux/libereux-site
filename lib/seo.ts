@@ -14,7 +14,7 @@ export function og(path: string, type: "website" | "article" = "website"): Metad
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Libereux Digital Solutions: websites for small businesses from $99",
+        alt: "Libereux Digital Solutions: make AI work for your business",
       },
     ],
   };

@@ -1,105 +1,108 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type Msg = { from: "customer" | "assistant"; text: string };
 
 type Sample = {
   id: string;
   tab: string;
   name: string;
-  title: string;
-  cta: string;
-  bg: string;
-  ctaBg: string;
-  ctaColor: string;
-  label: string;
-  rows: [string, string][];
-  foot: [string, string];
-  photos: [string, string, string];
+  status: string;
+  time: string;
+  accent: string;
+  accentText: string;
+  note: string;
+  messages: Msg[];
 };
 
-// Invented sample businesses that show what a Starter site looks like.
+// Invented sample businesses and conversations that show what an AI assistant can do.
 const samples: Sample[] = [
   {
     id: "restaurant",
     tab: "Restaurant",
     name: "Mama Dee's Kitchen",
-    title: "Soul food, made fresh every morning.",
-    cta: "Call to order",
-    bg: "#7a2e12",
-    ctaBg: "#ffd27a",
-    ctaColor: "#3a1505",
-    label: "Today's plates",
-    rows: [
-      ["Smothered chicken", "$13"],
-      ["Oxtails and rice", "$18"],
-      ["Mac and greens", "$7"],
-      ["Peach cobbler", "$5"],
+    status: "Assistant",
+    time: "Friday, 10:52 pm",
+    accent: "#1b2a4a",
+    accentText: "#ffffff",
+    note: "A late-night table request, handled while the owner is busy in the kitchen.",
+    messages: [
+      { from: "customer", text: "Are you still open tonight? We're a party of 6." },
+      { from: "assistant", text: "We're open until midnight on Fridays. I can hold a table for 6 at 11:15. Want it?" },
+      { from: "customer", text: "Yes please!" },
+      { from: "assistant", text: "Done. Your table is held under this number. See you soon." },
     ],
-    foot: ["Open 11 to 8", "Directions"],
-    photos: ["#e0a64b", "#b8572a", "#f3d9a4"],
   },
   {
     id: "salon",
     tab: "Salon",
     name: "Fade & Grace Studio",
-    title: "Your chair is ready when you are.",
-    cta: "Book a time",
-    bg: "#2f3d5c",
-    ctaBg: "#f4c6d3",
-    ctaColor: "#2f1a22",
-    label: "Services",
-    rows: [
-      ["Silk press", "$65"],
-      ["Braids, medium", "$140"],
-      ["Cut and style", "$45"],
-      ["Kids cut", "$20"],
+    status: "Assistant",
+    time: "Sunday, 11:08 pm",
+    accent: "#7a3b5c",
+    accentText: "#ffffff",
+    note: "A booking made on Sunday night, without a missed call or a voicemail.",
+    messages: [
+      { from: "customer", text: "Can I get a silk press Saturday morning?" },
+      { from: "assistant", text: "Grace has 9:30 or 11:00 open on Saturday. Which works for you?" },
+      { from: "customer", text: "9:30" },
+      { from: "assistant", text: "Booked. You'll get a reminder on Friday evening with directions." },
     ],
-    foot: ["Walk-ins Sat", "Call us"],
-    photos: ["#f4c6d3", "#8a6f9e", "#d9c8b4"],
   },
   {
-    id: "realtor",
-    tab: "Realtor",
-    name: "Renee Park Realty",
-    title: "Find the home that fits your family.",
-    cta: "See listings",
-    bg: "#14463f",
-    ctaBg: "#ffffff",
-    ctaColor: "#14463f",
-    label: "New this week",
-    rows: [
-      ["3 bed, Jonesboro", "$264k"],
-      ["4 bed, Morrow", "$312k"],
-      ["2 bed, Riverdale", "$198k"],
-      ["Duplex, Forest Park", "$289k"],
+    id: "guesthouse",
+    tab: "Guesthouse",
+    name: "Casa Lumbre",
+    status: "Asistente",
+    time: "Martes, 2:14 am",
+    accent: "#14463f",
+    accentText: "#ffffff",
+    note: "The guest writes in Spanish at 2 am, and the assistant answers in Spanish.",
+    messages: [
+      { from: "customer", text: "Hola, ¿tienen habitación para dos el viernes?" },
+      { from: "assistant", text: "¡Hola! Sí, tenemos una habitación doble libre el viernes. ¿Se la reservo?" },
+      { from: "customer", text: "Sí, por favor." },
+      { from: "assistant", text: "Listo. Le envío la confirmación y cómo llegar desde el aeropuerto." },
     ],
-    foot: ["Free home value", "Text Renee"],
-    photos: ["#9cc5b5", "#d7c6a3", "#5f8f7f"],
   },
   {
     id: "contractor",
     tab: "Contractor",
     name: "Southside Roof & Repair",
-    title: "Roofs, gutters and repairs done right.",
-    cta: "Get a free quote",
-    bg: "#17222d",
-    ctaBg: "#ee6a1f",
-    ctaColor: "#17222d",
-    label: "What we fix",
-    rows: [
-      ["Roof replacement", "Free quote"],
-      ["Leak repair", "Same week"],
-      ["Gutters", "From $450"],
-      ["Storm damage", "Insurance help"],
+    status: "Assistant",
+    time: "Monday, 9:41 pm",
+    accent: "#ff6b35",
+    accentText: "#111827",
+    note: "An urgent job captured with photos, so the owner calls back already knowing the problem.",
+    messages: [
+      { from: "customer", text: "My roof started leaking after the storm. Can someone look this week?" },
+      { from: "assistant", text: "Sorry to hear that. Can you send two photos of the leak? I'll add you to Thursday's inspections." },
+      { from: "customer", text: "Sent 2 photos" },
+      { from: "assistant", text: "Got them. You're booked for Thursday at 10:00. The crew will call before they arrive." },
     ],
-    foot: ["Licensed + insured", "See our work"],
-    photos: ["#8a97a3", "#ee6a1f", "#c9d1d8"],
   },
 ];
 
 export default function HeroDemo() {
   const [active, setActive] = useState(samples[0].id);
+  // Everything is visible on first load. Messages only play in after someone picks a tab.
+  const [shown, setShown] = useState(samples[0].messages.length);
   const s = samples.find((x) => x.id === active) ?? samples[0];
+  const playing = shown < s.messages.length;
+
+  useEffect(() => {
+    if (!playing) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = window.setTimeout(() => setShown((n) => n + 1), reduce ? 0 : 750);
+    return () => window.clearTimeout(t);
+  }, [playing, shown]);
+
+  function pick(id: string) {
+    if (id === active) return;
+    setActive(id);
+    setShown(1);
+  }
 
   return (
     <div className="demo">
@@ -108,13 +111,13 @@ export default function HeroDemo() {
         <path d="M400 200 H320 V140 H260" stroke="currentColor" strokeWidth="2" />
         <path d="M0 470 H70 V540 H180" stroke="currentColor" strokeWidth="2" />
         <path d="M400 420 H330 V500 H250" stroke="currentColor" strokeWidth="2" />
-        <circle cx="200" cy="60" r="5" fill="#ee6a1f" />
-        <circle cx="260" cy="140" r="5" fill="#17222d" />
-        <circle cx="180" cy="540" r="5" fill="#17222d" />
-        <circle cx="250" cy="500" r="5" fill="#ee6a1f" />
+        <circle cx="200" cy="60" r="5" fill="#ff6b35" />
+        <circle cx="260" cy="140" r="5" fill="#1b2a4a" />
+        <circle cx="180" cy="540" r="5" fill="#1b2a4a" />
+        <circle cx="250" cy="500" r="5" fill="#ff6b35" />
       </svg>
 
-      <div className="demo-tabs" role="tablist" aria-label="Sample website by business type">
+      <div className="demo-tabs" role="tablist" aria-label="Sample AI assistant by business type">
         {samples.map((x) => (
           <button
             key={x.id}
@@ -124,7 +127,7 @@ export default function HeroDemo() {
             aria-selected={x.id === active}
             aria-controls="demo-panel"
             className="demo-tab"
-            onClick={() => setActive(x.id)}
+            onClick={() => pick(x.id)}
           >
             {x.tab}
           </button>
@@ -134,44 +137,45 @@ export default function HeroDemo() {
       <div className="phone">
         <div className="phone-screen">
           <span className="phone-notch" aria-hidden="true" />
-          <div
-            className="mini"
-            key={s.id}
-            id="demo-panel"
-            role="tabpanel"
-            aria-labelledby={`tab-${s.id}`}
-            aria-label={`Sample website for ${s.name}`}
-          >
-            <div className="mini-hero" style={{ background: s.bg }}>
-              <span className="mini-name">{s.name}</span>
-              <span className="mini-title">{s.title}</span>
-              <span className="mini-cta" style={{ background: s.ctaBg, color: s.ctaColor }}>
-                {s.cta}
+          <div className="chat" id="demo-panel" role="tabpanel" aria-labelledby={`tab-${s.id}`}>
+            <div className="chat-head" style={{ background: s.accent, color: s.accentText }}>
+              <span className="chat-avatar" aria-hidden="true">
+                {s.name.charAt(0)}
+              </span>
+              <span>
+                <span className="chat-name">{s.name}</span>
+                <span className="chat-status">{s.status}</span>
               </span>
             </div>
-            <div className="mini-body">
-              <div className="mini-photos" aria-hidden="true">
-                {s.photos.map((c, i) => (
-                  <span key={i} style={{ background: c }} />
-                ))}
-              </div>
-              <span className="mini-label">{s.label}</span>
-              {s.rows.map(([a, b]) => (
-                <div className="mini-row" key={a}>
-                  <span>{a}</span>
-                  <b>{b}</b>
-                </div>
+            <div className="chat-body" aria-live="polite" lang={s.id === "guesthouse" ? "es" : undefined}>
+              <span className="chat-time">{s.time}</span>
+              {s.messages.slice(0, shown).map((m, i) => (
+                <p
+                  key={`${s.id}-${i}`}
+                  className={`bubble bubble-${m.from}`}
+                  style={m.from === "assistant" ? { background: s.accent, color: s.accentText } : undefined}
+                >
+                  {m.text}
+                </p>
               ))}
+              {playing && (
+                <span className="typing" aria-label="Typing">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              )}
             </div>
-            <div className="mini-foot">
-              <span>{s.foot[0]}</span>
-              <span>{s.foot[1]}</span>
+            <div className="chat-input" aria-hidden="true">
+              <span>Message</span>
             </div>
           </div>
         </div>
       </div>
 
-      <p className="demo-caption">Sample designs. Tap a business type to see how a Starter site could look.</p>
+      <p className="demo-caption">
+        <strong>Sample conversation.</strong> {s.note}
+      </p>
     </div>
   );
 }

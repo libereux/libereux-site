@@ -1,257 +1,303 @@
-// Single source of truth for site copy that appears in more than one place.
-// Rules: no em dashes, never name a build platform, show real prices.
+// Single source of truth for site copy.
+// Direction approved by James Collins on 2026-10-21: Digital Solutions leads, AI first,
+// global and fully virtual, Procurement and Real Estate in a "Libereux family" strip.
+// Rules: no em dashes, no prices, no build platform or AI tool names, no case studies or
+// testimonials without the client's written permission, every promise approved by James.
+// Service copy comes from the Pitch Kit one-pagers in Drive (Libereux / Digital Solutions).
 
 export const site = {
   name: "Libereux Holdings",
   legalName: "Libereux Holdings, LLC",
   url: "https://libereux.com",
   email: "holdings@libereux.com",
+  phone: "(678) 463-0804",
+  phoneHref: "tel:+16784630804",
   founder: "James Collins",
+  location: "Georgia, USA",
+  reach: "Fully remote. Working with clients worldwide.",
+  consultation: "free 30-minute consultation",
   description:
-    "Affordable websites, web apps and business tools for small business owners. Visible prices from $99, delivered in as little as one business day, by Libereux Digital Solutions.",
+    "AI consulting, assistants and automations, websites and apps, smart home design and SEO. Free 30-minute consultation with James Collins, online worldwide.",
 };
 
-export type Tier = {
-  id: string;
-  name: string;
-  price: number;
-  turnaround: string;
-  summary: string;
-  includes: string[];
-  featured?: boolean;
-};
-
-export const tiers: Tier[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    price: 99,
-    turnaround: "Ready in 5 to 7 business days",
-    summary: "A clean, professional website for a business that has none yet.",
-    includes: [
-      "Free consultation call",
-      "Up to 5 pages",
-      "Works on phones, tablets and computers",
-      "1 round of revisions",
-    ],
-  },
-  {
-    id: "growth",
-    name: "Growth",
-    price: 200,
-    turnaround: "Ready in 3 to 5 business days",
-    summary: "More room to show your work, your menu or your listings.",
-    includes: [
-      "Everything in Starter",
-      "More pages",
-      "More revision rounds",
-      "Faster delivery",
-    ],
-  },
-  {
-    id: "priority",
-    name: "Priority",
-    price: 250,
-    turnaround: "Ready the next business day",
-    summary: "Everything in Growth, built first and delivered fastest.",
-    includes: [
-      "Everything in Growth",
-      "Your project goes to the front of the line",
-      "Delivered the next business day",
-    ],
-    featured: true,
-  },
-];
-
-export const custom = {
-  name: "Custom builds",
-  summary:
-    "Booking systems, online payments, customer logins, staff portals and internal tools. Quoted after a free consultation, paid in milestones, never one lump sum up front.",
-  addOns: [
-    { name: "Online booking or payments added to your site", price: "from $150" },
-    { name: "Customer or staff logins with different access levels", price: "from $200" },
-    { name: "Custom web apps and business tools", price: "from $500" },
-  ],
-};
-
-export const maintenance = {
-  price: 10,
-  includes: [
-    "Hosting, so there is no separate hosting bill",
-    "1 content update each month (text, photos, prices, hours)",
-    "Fixes for anything we built that stops working",
-    "Help connecting your own domain name, at no charge",
-  ],
-};
-
-export const audiences = [
-  {
-    id: "restaurant",
-    name: "Restaurants",
-    line: "Menu, hours and a call button customers can tap from the parking lot.",
-  },
-  {
-    id: "salon",
-    name: "Salons and barbers",
-    line: "Services, prices and booking, so the phone rings less and the chair stays full.",
-  },
-  {
-    id: "realtor",
-    name: "Realtors",
-    line: "Listings and a contact form that make you look like the established agent you are.",
-  },
-  {
-    id: "contractor",
-    name: "Contractors",
-    line: "Photos of finished jobs, service areas and a quote request that lands in your inbox.",
-  },
-];
-
-export const steps = [
-  {
-    title: "Free consultation",
-    body: "A short call about your business and what you need. No cost, no pressure, and you will know the price before we hang up.",
-  },
-  {
-    title: "We build it",
-    body: "You pick the speed that fits. We build in layers and check each one, so nothing fragile goes out the door.",
-  },
-  {
-    title: "You review",
-    body: "You see the site before it goes live and send one batch of changes. We make them together.",
-  },
-  {
-    title: "You go live",
-    body: "We connect your domain, show you around, and stay on call if you choose the maintenance plan.",
-  },
-];
-
-export type CaseStudy = {
+export type Service = {
   slug: string;
-  client: string;
-  kind: string;
-  title: string;
-  summary: string;
-  stats: { value: string; label: string }[];
-  challenge: string[];
-  built: { heading: string; body: string }[];
-  outcome: string[];
+  name: string;
+  short: string;
+  title: string; // SEO title
+  metaDescription: string;
+  headline: string;
+  whoFor: string;
+  problems: string[];
+  youGet: string[];
+  steps: { title: string; body: string }[];
+  why: string[];
+  cta: string;
 };
 
-export const caseStudies: CaseStudy[] = [
+export const services: Service[] = [
   {
-    slug: "pinnacle-maintenance-services",
-    client: "Pinnacle Maintenance Services",
-    kind: "Subcontractor management app",
-    title: "Keeping subcontractor crews aligned across every job site",
-    summary:
-      "A dedicated app that turns every job into clear checklists and task assignments each subcontractor can follow without guessing.",
-    stats: [
-      { value: "Multi-site", label: "crews coordinated in one place" },
-      { value: "1 owner", label: "for every task on every job" },
+    slug: "ai-strategy",
+    name: "AI consultation and strategy",
+    short: "A clear, practical plan for where AI helps your business most, what to try first, and what to skip.",
+    title: "AI Consultation and Strategy for Businesses",
+    metaDescription:
+      "Know where AI fits in your business and what to do first. A practical, plain-language AI roadmap. Free 30-minute consultation, online worldwide.",
+    headline: "Know exactly where AI fits in your business, and what to do first.",
+    whoFor:
+      "Owners and leaders who are curious about AI, feel pressure to act, and want honest, practical guidance before investing time or budget.",
+    problems: [
+      "Too many options and too much noise to know where to start.",
+      "Worry about wasting effort on ideas that do not fit the business.",
+      "Uncertainty about what is safe to use with customer and company information.",
+      "A team that is unsure how AI will change their day-to-day work.",
     ],
-    challenge: [
-      "Pinnacle Maintenance Services runs subcontractor crews across several active job sites at once, often with different vendors handling different parts of the same project.",
-      "Missed instructions and unclear task ownership were costing time and money.",
+    youGet: [
+      "A review of how your business runs today and where time is lost.",
+      "A prioritized list of AI opportunities, ranked by impact and effort.",
+      "A practical roadmap with quick wins and longer-term moves.",
+      "Simple guidelines for using AI responsibly with your information.",
+      "A plain-language session to bring your team on board.",
     ],
-    built: [
-      {
-        heading: "Jobs organized as checklists",
-        body: "Every job is broken into checklists, so crews see exactly what needs doing and in what order.",
-      },
-      {
-        heading: "Clear task assignments",
-        body: "Each task has one subcontractor responsible for it, which removes the question of who owns what.",
-      },
-      {
-        heading: "Secure by default",
-        body: "Built on enterprise-grade secure infrastructure backed by SOC 2, ISO 27001 and GDPR-aligned practices.",
-      },
+    steps: [
+      { title: "Discovery", body: "A conversation about your goals, workflows and challenges." },
+      { title: "Review", body: "We map your processes and spot the highest-value opportunities." },
+      { title: "Roadmap", body: "You receive a clear written plan with priorities and next steps." },
+      { title: "Walkthrough", body: "We review the plan together and answer every question." },
+      { title: "Optional build", body: "When you are ready, we can implement the plan for you." },
     ],
-    outcome: [
-      "Fewer miscommunications on site, clearer accountability, and a system the team can rely on as they add more crews and more sites.",
+    why: [
+      "Advice from the same person who can build what is recommended.",
+      "Clear, jargon-free explanations that make decisions easier.",
+      "Recommendations shaped around your business, never a generic template.",
+      "Available in person where James is working, or online anywhere.",
     ],
+    cta: "Get your AI roadmap.",
   },
   {
-    slug: "enjoyment-os",
-    client: "Enjoyment Department",
-    kind: "Agency operating system",
-    title: "One platform for a marketing agency running nine brands",
-    summary:
-      "An internal operating system that replaced a patchwork of social apps, booking tools and inboxes with one place the whole team can see.",
-    stats: [
-      { value: "9", label: "client brands onboarded" },
-      { value: "3", label: "core modules in phase 1" },
-      { value: "6", label: "team accounts" },
+    slug: "ai-implementation",
+    name: "AI implementation",
+    short: "Assistants that answer customers, automations that move work forward, and operations that run with less manual effort.",
+    title: "AI Implementation: Assistants and Automations",
+    metaDescription:
+      "AI assistants, automations and workflows that answer customers after hours and take repetitive admin off your team. Designed, built and supported.",
+    headline: "Put AI to work in your business, quietly handling the tasks that slow your team down.",
+    whoFor:
+      "Businesses ready to move from talking about AI to using it, especially teams buried in repetitive admin, customer questions or manual handoffs.",
+    problems: [
+      "Customer questions that go unanswered after hours.",
+      "Staff time spent copying information between systems.",
+      "Follow-ups, reminders and reports that depend on someone remembering.",
+      "Processes that break down as the business grows.",
     ],
-    challenge: [
-      "Enjoyment Department is a multimedia marketing and brand activation agency managing nine active client brands with a six-person team.",
-      "Account ownership, flyer approvals and event details lived in people's heads and inboxes instead of one place everyone could see.",
+    youGet: [
+      "Custom assistants that answer customer and team questions in your voice.",
+      "Automations that move information, send follow-ups and prepare reports.",
+      "AI-driven workflows for intake, scheduling, sorting and summarizing.",
+      "Clear documentation and hands-on training for your team.",
+      "A review period to fine-tune everything once it is live.",
     ],
-    built: [
-      {
-        heading: "Client and brand management",
-        body: "A profile for every brand with its points of contact. Every event, post and asset in the platform ties back to a brand here.",
-      },
-      {
-        heading: "Event and venue dashboard",
-        body: "Clickable stat cards that open the records behind them, plus an alerts section that only appears when something needs attention.",
-      },
-      {
-        heading: "Content planner and flyer workflow",
-        body: "A content calendar filterable by brand, a six-stage flyer pipeline with an owner at every stage, and a warning badge on anything scheduled less than 14 days before its event.",
-      },
-      {
-        heading: "Brand asset library",
-        body: "Logos, color palettes, templates and reference files per brand, all previewable without downloading.",
-      },
-      {
-        heading: "AI meeting notes",
-        body: "Raw notes go in, and one click returns a summary, action items, key decisions and follow-ups, stored alongside the original.",
-      },
-      {
-        heading: "Voice dictation, honestly labeled",
-        body: "Browsers limit how long they will listen. Instead of hiding that, the mic shows a live timer, pauses at 60 seconds without losing a word, and resumes with one tap.",
-      },
+    steps: [
+      { title: "Discover", body: "We identify the tasks and processes that matter most." },
+      { title: "Design", body: "We map how the assistant or automation will work, step by step." },
+      { title: "Build", body: "We create it and test it carefully with real scenarios." },
+      { title: "Launch", body: "We switch it on and guide your team through it." },
+      { title: "Refine", body: "We adjust based on how it performs in daily use." },
     ],
-    outcome: [
-      "The platform runs on the agency's own domain in the agency's own brand colors, and was built in phases so the next modules (staff scheduling, analytics, a client portal) can be added without rework.",
+    why: [
+      "One partner who understands both the strategy and the build.",
+      "Solutions designed around how your business already works.",
+      "Practical, reliable automations rather than experiments.",
+      "Ongoing support so your systems keep improving.",
     ],
+    cta: "Let us automate your first workflow.",
+  },
+  {
+    slug: "websites-and-apps",
+    name: "Websites, apps and project tools",
+    short: "Modern websites, web and mobile apps, and project management tools built around how your team really works.",
+    title: "Websites, Web Apps, Mobile Apps and Project Tools",
+    metaDescription:
+      "Websites, web apps, mobile apps and custom project management tools for businesses, with AI built in where it adds real value.",
+    headline: "Have an idea for a site, app or internal tool? We can build it for you.",
+    whoFor:
+      "Business owners who need a professional website, a web or mobile app for customers, or a project management tool that fits how their team really works.",
+    problems: [
+      "An outdated website that does not reflect the quality of your business.",
+      "A great app idea with no clear path to launch.",
+      "Projects tracked across scattered messages and spreadsheets.",
+      "Off-the-shelf tools that never quite fit the way you work.",
+    ],
+    youGet: [
+      "Modern, fast websites that work on every device.",
+      "Web apps and mobile apps designed around your customers.",
+      "Custom project management tools built for your team's workflow.",
+      "AI features built in where they add real value.",
+      "A smooth handover with training and support.",
+    ],
+    steps: [
+      { title: "Discovery", body: "We define your goals, audience and must-have features." },
+      { title: "Design", body: "You review layouts and flows before anything is built." },
+      { title: "Build", body: "We develop in stages with regular check-ins and previews." },
+      { title: "Launch", body: "We test thoroughly and take it live with you." },
+      { title: "Grow", body: "We support updates and new features as you expand." },
+    ],
+    why: [
+      "More than a web developer: strategy, AI and build in one place.",
+      "Clear communication and visible progress at every stage.",
+      "Built to be easy for you and your team to use and update.",
+      "Work with James in person where he is, or online anywhere.",
+    ],
+    cta: "Tell us what you want to build.",
+  },
+  {
+    slug: "smart-home",
+    name: "Remote smart home design",
+    short: "See your own space as a smart home before you buy a single device, then set it up together on a screen share.",
+    title: "Remote Smart Home Design and Setup",
+    metaDescription:
+      "Smart home recommendations, before and after visuals of your own rooms, a narrated walkthrough, and remote setup in accounts you own. Worldwide.",
+    headline: "See your own space as a smart home before you buy a single device.",
+    whoFor:
+      "Homeowners, renters, property owners and hosts who want a smarter, more comfortable space, clear advice on what to buy, and setup help without an in-person visit.",
+    problems: [
+      "Too many devices to choose from, and no idea which ones work well together.",
+      "Hard to picture how a smart setup would look and feel in your space.",
+      "Worry about buying the wrong products or ending up with a confusing setup.",
+      "Uncertainty about who should have access to your home accounts.",
+    ],
+    youGet: [
+      "Personalized product recommendations for your space and lifestyle.",
+      "Before and after visuals of your own rooms, created from photos you send.",
+      "A narrated walkthrough of your space showing how everything works together.",
+      "Remote setup by James himself, in accounts you own, on a screen share with you present.",
+      "Simple guidance so everyone at home feels confident using it.",
+    ],
+    steps: [
+      { title: "Share", body: "Send a few photos of your space and tell us how you live." },
+      { title: "Plan", body: "We recommend products that fit your rooms, routines and style." },
+      { title: "Visualize", body: "You receive before and after visuals and a narrated walkthrough." },
+      { title: "Buy and place", body: "You buy the devices and place them yourself, or hire a local installer." },
+      { title: "Set up together", body: "James configures everything remotely in your own accounts, on a screen share with you present." },
+    ],
+    why: [
+      "You see the result in your own space before you commit.",
+      "Your home stays yours: we never hold your passwords, and you sign in yourself.",
+      "Recommendations are based on your needs. If we earn a commission on a recommended product, we say so.",
+      "Available wherever you are, fully online.",
+    ],
+    cta: "See your space, transformed.",
+  },
+  {
+    slug: "website-updates-seo",
+    name: "Website updates and SEO",
+    short: "Keep your website current and make it easier for customers to find you in search.",
+    title: "Website Updates and SEO for Businesses",
+    metaDescription:
+      "Website reviews, content updates and search improvements that make your business easier to find and turn more visitors into enquiries.",
+    headline: "Keep your website current, and make it easier for customers to find you.",
+    whoFor:
+      "Businesses with an existing website that feels out of date, is hard to update, or is not bringing in the visitors and enquiries it should.",
+    problems: [
+      "Outdated content, broken links or pages that load slowly.",
+      "A site that is hard to find in search results.",
+      "Updates that wait weeks because nobody has the time or access.",
+      "Unclear messaging that does not turn visitors into enquiries.",
+    ],
+    youGet: [
+      "A review of your site's content, speed, structure and search visibility.",
+      "Content and design updates that reflect your business today.",
+      "Search improvements: page titles, descriptions, structure and local listings.",
+      "Clearer calls to action that guide visitors to get in touch.",
+      "Ongoing update support, so your site never falls behind.",
+    ],
+    steps: [
+      { title: "Review", body: "We assess your current site and how customers find you." },
+      { title: "Plan", body: "You receive a prioritized list of improvements." },
+      { title: "Update", body: "We make the changes, starting with the highest impact." },
+      { title: "Check", body: "We confirm everything works well on every device." },
+      { title: "Maintain", body: "We keep your site fresh with regular updates." },
+    ],
+    why: [
+      "Practical improvements focused on visibility and enquiries.",
+      "Updates handled for you, so your team can focus on the business.",
+      "AI-assisted content support where it helps you move faster.",
+      "One partner for updates today and bigger builds tomorrow.",
+    ],
+    cta: "Request a website review.",
+  },
+];
+
+export const engagementSteps = [
+  {
+    title: "Conversation",
+    body: "A free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where James is working.",
+  },
+  {
+    title: "Recommendation",
+    body: "You receive a focused plan with clear priorities and a written scope, so you know what will be done before any work starts.",
+  },
+  {
+    title: "Build",
+    body: "We deliver the pieces you choose, with regular check-ins so you always know where things stand.",
+  },
+  {
+    title: "Support",
+    body: "We refine, train your team, and help you take the next step.",
+  },
+];
+
+export const frictionPoints = [
+  {
+    title: "Count the steps",
+    body: "We walk the path your customer takes to book, buy or get an answer, and the path your team takes to finish a task.",
+  },
+  {
+    title: "Remove what is not needed",
+    body: "Every extra click, call or copy-and-paste is a reason for someone to give up. We take out the ones that do not earn their place.",
+  },
+  {
+    title: "Let AI carry the rest",
+    body: "What is left gets easier: assistants answer, automations follow up, and the right information shows up without anyone chasing it.",
   },
 ];
 
 export const faqs = [
   {
-    q: "Is $99 really the whole price?",
-    a: "Yes. Starter is $99 for up to 5 pages and 1 round of revisions. The scope is stated before you pay, so there are no surprises later. Hosting and monthly updates are optional at $10 a month.",
+    q: "Do I need to understand AI before we talk?",
+    a: "No. That is our job. Tell us how your business runs and what frustrates you, and we will explain what AI can and cannot do for you in plain language.",
   },
   {
-    q: "I am not good with technology. Can I still do this?",
-    a: "Yes. Most of our clients have never had a website before. You talk, we listen, and we handle the technical side. You will get a plain-language walkthrough when your site goes live.",
+    q: "Is the consultation really free?",
+    a: "Yes. The first consultation is 30 minutes, free, and comes with no obligation.",
   },
   {
-    q: "Do I need to buy a domain name?",
-    a: "You register your own domain so it always belongs to you. We walk you through it and connect it for you at no charge.",
+    q: "What does it cost?",
+    a: "Every engagement is different, so we scope it after the free consultation. You receive a written scope with the price before any work starts.",
   },
   {
-    q: "What if English is not my first language, or my staff speak another language?",
-    a: "Calls are in English by default. If that is hard for you, we can work by email and translate proposals and call recaps in both directions.",
+    q: "Do you work outside the United States?",
+    a: "Yes. Everything can be done online, from anywhere in the world, and James also meets clients in person in the cities where he is working.",
   },
   {
-    q: "Do you work with businesses outside the United States?",
-    a: "Yes. Prices are the same everywhere, and consultations happen over video call.",
+    q: "What if English is not my first language?",
+    a: "Calls are in English. If that is hard for you or your team, we can work by email and translate proposals and call recaps in both directions.",
   },
   {
-    q: "What if I cannot afford it right now?",
-    a: "Tell us. We can shrink the scope, start smaller and grow later, or point you to free tools you can set up yourself. We would rather you spend wisely than stretch.",
+    q: "Do you install smart home devices?",
+    a: "No. You buy and place the devices yourself, or hire a local installer. James then configures everything remotely, in accounts you own, on a screen share with you present. We never hold your passwords.",
   },
 ];
 
-export const serviceAreas = [
-  "Morrow",
-  "Forest Park",
-  "Jonesboro",
-  "Riverdale",
-  "East Point",
-  "College Park",
+export const family = [
+  {
+    href: "/procurement",
+    name: "Libereux Procurement",
+    body: "International sourcing between the United States and the Bahamas, with clear estimates and matching invoices.",
+  },
+  {
+    href: "/real-estate",
+    name: "Libereux Real Estate",
+    body: "Furnished stays and long-term rentals in Georgia, managed locally.",
+  },
 ];

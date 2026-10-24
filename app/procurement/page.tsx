@@ -4,7 +4,7 @@ import { PageHead } from "@/components/Blocks";
 import { site } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Procurement: US and Bahamas Sourcing",
+  title: "Libereux Procurement: US and Bahamas Sourcing",
   description:
     "Libereux Procurement sources goods in the United States for buyers in the Bahamas, handling purchasing, estimates and invoicing.",
   alternates: { canonical: "/procurement" },

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { caseStudies, faqs, steps } from "@/lib/content";
+import { engagementSteps, faqs, family, services } from "@/lib/content";
 
-export function Steps() {
+export function Steps({ items = engagementSteps }: { items?: { title: string; body: string }[] }) {
   return (
-    <ol className="steps">
-      {steps.map((s) => (
+    <ol className="steps" data-count={items.length}>
+      {items.map((s) => (
         <li className="step" key={s.title}>
           <h3>{s.title}</h3>
           <p className="muted">{s.body}</p>
@@ -14,35 +14,24 @@ export function Steps() {
   );
 }
 
-export function WorkCards() {
+export function ServiceList() {
   return (
-    <div className="work-grid">
-      {caseStudies.map((c) => (
-        <Link className="work-card" href={`/work/${c.slug}`} key={c.slug}>
-          <span className="work-kind">
-            {c.client}, {c.kind.toLowerCase()}
-          </span>
-          <h3>{c.title}</h3>
-          <p style={{ color: "var(--on-ink-muted)" }}>{c.summary}</p>
-          <div className="work-stats">
-            {c.stats.map((s) => (
-              <div key={s.label}>
-                <b>{s.value}</b>
-                <span>{s.label}</span>
-              </div>
-            ))}
-          </div>
-          <span className="read-more">Read the case study</span>
+    <div className="service-list">
+      {services.map((s) => (
+        <Link className="service-row" href={`/services/${s.slug}`} key={s.slug}>
+          <h3>{s.name}</h3>
+          <p className="muted">{s.short}</p>
+          <span className="go">Learn more</span>
         </Link>
       ))}
     </div>
   );
 }
 
-export function Faq() {
+export function Faq({ items = faqs }: { items?: { q: string; a: string }[] }) {
   return (
     <div className="faq">
-      {faqs.map((f) => (
+      {items.map((f) => (
         <details key={f.q}>
           <summary>{f.q}</summary>
           <p>{f.a}</p>
@@ -52,12 +41,39 @@ export function Faq() {
   );
 }
 
+export function Family() {
+  return (
+    <section className="section-tight" aria-labelledby="family-title">
+      <div className="wrap">
+        <div className="section-head" style={{ marginBottom: 28 }}>
+          <h2 id="family-title" style={{ fontSize: "var(--step-2)" }}>
+            The Libereux family
+          </h2>
+          <p className="muted">
+            Digital Solutions is part of Libereux Holdings, LLC, alongside two other businesses.
+          </p>
+        </div>
+        <div className="divisions">
+          {family.map((f) => (
+            <Link className="division" href={f.href} key={f.href}>
+              <h3>{f.name}</h3>
+              <p className="muted">{f.body}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function Closer({
-  title = "Let's talk about your business.",
-  body = "Book a free consultation call. You will hear a plain-language plan and a firm price before we hang up. No obligation.",
+  title = "Have a question about AI, or something you want built?",
+  body = "Start with a free 30-minute consultation with James Collins, online from anywhere or in person where he is working. You will leave with clear next steps, and no obligation.",
+  service,
 }: {
   title?: string;
   body?: string;
+  service?: string;
 }) {
   return (
     <section className="section on-ink" aria-labelledby="closer-title">
@@ -65,11 +81,11 @@ export function Closer({
         <h2 id="closer-title">{title}</h2>
         <p className="lede">{body}</p>
         <div className="btn-row">
-          <Link href="/contact" className="btn btn-primary">
-            Book a free call
+          <Link href={service ? `/contact?service=${service}` : "/contact"} className="btn btn-primary">
+            Book a free consultation
           </Link>
-          <Link href="/pricing" className="btn btn-ghost">
-            See all prices
+          <Link href="/how-it-works" className="btn btn-ghost">
+            How it works
           </Link>
         </div>
       </div>

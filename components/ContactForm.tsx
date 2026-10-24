@@ -1,18 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { site, tiers } from "@/lib/content";
+import { services, site } from "@/lib/content";
 
 type Status = { kind: "idle" | "sending" | "ok" | "err"; message?: string };
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const planRef = useRef<HTMLSelectElement>(null);
+  const serviceRef = useRef<HTMLSelectElement>(null);
 
-  // Preselect the plan when arriving from a "Start with ..." button.
+  // Preselect the service when arriving from a service page.
   useEffect(() => {
-    const p = new URLSearchParams(window.location.search).get("plan");
-    if (p && planRef.current && tiers.some((t) => t.id === p)) planRef.current.value = p;
+    const p = new URLSearchParams(window.location.search).get("service");
+    if (p && serviceRef.current && services.some((s) => s.slug === p)) serviceRef.current.value = p;
   }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,43 +30,21 @@ export default function ContactForm() {
       const body = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) throw new Error(body.error || "Request failed");
       form.reset();
-      setStatus({
-        kind: "ok",
-        message: "Request sent. James will reply soon to set up your call.",
-      });
+      setStatus({ kind: "ok", message: "Request sent. James will reply to set up your free consultation." });
     } catch (err) {
       setStatus({
         kind: "err",
-        message: `Your request did not send. Email ${site.email} instead and we will reply soon.`,
+        message: `Your request did not send. Email ${site.email} instead and we will set up your consultation from there.`,
       });
       console.error(err);
     }
   }
 
   return (
-    <form className="form" onSubmit={onSubmit} noValidate={false}>
+    <form className="form" onSubmit={onSubmit}>
       <div className="field">
         <label htmlFor="name">Your name</label>
         <input id="name" name="name" autoComplete="name" required />
-      </div>
-
-      <div className="field">
-        <label htmlFor="business">Business name</label>
-        <input id="business" name="business" autoComplete="organization" />
-      </div>
-
-      <div className="field">
-        <label htmlFor="type">Type of business</label>
-        <select id="type" name="type" defaultValue="">
-          <option value="" disabled>
-            Choose one
-          </option>
-          <option>Restaurant or food</option>
-          <option>Salon or barber</option>
-          <option>Real estate</option>
-          <option>Contractor or home services</option>
-          <option>Something else</option>
-        </select>
       </div>
 
       <div className="field">
@@ -74,30 +53,34 @@ export default function ContactForm() {
       </div>
 
       <div className="field">
-        <label htmlFor="phone">Phone (optional)</label>
-        <span className="hint" id="phone-hint">
-          Add it if you would rather we call or text.
-        </span>
-        <input id="phone" name="phone" type="tel" autoComplete="tel" aria-describedby="phone-hint" />
-      </div>
-
-      <div className="field">
-        <label htmlFor="plan">Plan you are interested in</label>
-        <select id="plan" name="plan" ref={planRef} defaultValue="not-sure">
+        <label htmlFor="service">What would you like help with?</label>
+        <select id="service" name="service" ref={serviceRef} defaultValue="not-sure">
           <option value="not-sure">Not sure yet</option>
-          {tiers.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}, ${t.price}
+          {services.map((s) => (
+            <option key={s.slug} value={s.slug}>
+              {s.name}
             </option>
           ))}
-          <option value="custom">Custom app or tool</option>
         </select>
       </div>
 
       <div className="field">
-        <label htmlFor="message">What do you need?</label>
+        <label htmlFor="location">Where are you based? (optional)</label>
+        <span className="hint" id="location-hint">
+          City and country, so we can suggest a time that suits your time zone.
+        </span>
+        <input id="location" name="location" autoComplete="address-level2" aria-describedby="location-hint" />
+      </div>
+
+      <div className="field">
+        <label htmlFor="phone">Phone or WhatsApp (optional)</label>
+        <input id="phone" name="phone" type="tel" autoComplete="tel" />
+      </div>
+
+      <div className="field">
+        <label htmlFor="message">Tell us a little about your business</label>
         <span className="hint" id="message-hint">
-          A few sentences is plenty. Any language is fine.
+          A few sentences is plenty.
         </span>
         <textarea id="message" name="message" aria-describedby="message-hint" />
       </div>
@@ -107,9 +90,14 @@ export default function ContactForm() {
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
+      <p className="consent">
+        We use your details only to reply to you and arrange your consultation. See our{" "}
+        <Link href="/privacy">privacy policy</Link>.
+      </p>
+
       <div>
         <button type="submit" className="btn btn-primary" disabled={status.kind === "sending"}>
-          {status.kind === "sending" ? "Sending request" : "Send request"}
+          {status.kind === "sending" ? "Sending request" : "Request my free consultation"}
         </button>
       </div>
 

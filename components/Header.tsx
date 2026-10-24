@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
-  { href: "/digital-solutions", label: "Services" },
-  { href: "/work", label: "Our work" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/services", label: "Services" },
+  { href: "/how-it-works", label: "How it works" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
@@ -40,7 +40,7 @@ export default function Header() {
             </Link>
           ))}
           <Link href="/contact" className="btn btn-primary">
-            Book a free call
+            Free consultation
           </Link>
         </nav>
 
@@ -49,6 +49,7 @@ export default function Header() {
           className="menu-toggle"
           aria-expanded={open}
           aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
         >
           {open ? "Close" : "Menu"}
@@ -71,7 +72,7 @@ export default function Header() {
             ))}
             <li>
               <Link href="/contact" className="btn btn-primary" onClick={() => setOpen(false)}>
-                Book a free call
+                Book a free consultation
               </Link>
             </li>
           </ul>

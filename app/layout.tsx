@@ -6,12 +6,12 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
-import { serviceAreas, site } from "@/lib/content";
+import { services, site } from "@/lib/content";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Affordable Websites for Small Businesses from $99 | Libereux",
+    default: "AI Consultant and Digital Solutions | Libereux",
     template: "%s | Libereux",
   },
   description: site.description,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#17222d",
+  themeColor: "#1b2a4a",
 };
 
 const orgLd = {
@@ -41,24 +41,39 @@ const orgLd = {
       url: site.url,
       logo: `${site.url}/libereux-logo.jpg`,
       email: site.email,
-      founder: { "@type": "Person", name: site.founder },
+      telephone: "+1-678-463-0804",
+      address: { "@type": "PostalAddress", addressRegion: "GA", addressCountry: "US" },
+      founder: { "@id": `${site.url}/#james` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${site.url}/#james`,
+      name: site.founder,
+      jobTitle: "Founder",
+      worksFor: { "@id": `${site.url}/#org` },
+      url: `${site.url}/about`,
+      knowsAbout: ["Artificial intelligence", "AI strategy", "Automation", "Web development", "Smart home technology", "Project management"],
     },
     {
       "@type": "ProfessionalService",
       "@id": `${site.url}/#digital-solutions`,
       name: "Libereux Digital Solutions",
       parentOrganization: { "@id": `${site.url}/#org` },
-      url: `${site.url}/digital-solutions`,
+      url: `${site.url}/services`,
       image: `${site.url}/libereux-logo.jpg`,
       email: site.email,
-      priceRange: "$99 to $250",
+      telephone: "+1-678-463-0804",
       description: site.description,
-      areaServed: [
-        ...serviceAreas.map((c) => ({ "@type": "City", name: `${c}, GA` })),
-        { "@type": "Country", name: "United States" },
-        { "@type": "Country", name: "Thailand" },
-      ],
-      knowsAbout: ["Web design", "Small business websites", "Web apps", "Mobile apps", "Project management tools"],
+      areaServed: "Worldwide",
+      founder: { "@id": `${site.url}/#james` },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Digital Solutions services",
+        itemListElement: services.map((sv) => ({
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: sv.name, url: `${site.url}/services/${sv.slug}` },
+        })),
+      },
     },
     {
       "@type": "WebSite",

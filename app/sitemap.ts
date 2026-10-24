@@ -1,29 +1,20 @@
 import type { MetadataRoute } from "next";
-import { caseStudies, site } from "@/lib/content";
+import { services, site } from "@/lib/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date("2026-10-24");
+  const lastModified = new Date("2026-10-24");
   const pages: [string, number][] = [
     ["", 1],
-    ["/digital-solutions", 0.9],
-    ["/pricing", 0.9],
-    ["/work", 0.7],
+    ["/services", 0.9],
     ["/contact", 0.8],
-    ["/about", 0.5],
+    ["/how-it-works", 0.7],
+    ["/about", 0.6],
     ["/procurement", 0.4],
-    ["/property-management", 0.4],
+    ["/real-estate", 0.4],
     ["/privacy", 0.1],
   ];
   return [
-    ...pages.map(([path, priority]) => ({
-      url: `${site.url}${path}`,
-      lastModified: now,
-      priority,
-    })),
-    ...caseStudies.map((c) => ({
-      url: `${site.url}/work/${c.slug}`,
-      lastModified: now,
-      priority: 0.6,
-    })),
+    ...pages.map(([path, priority]) => ({ url: `${site.url}${path}`, lastModified, priority })),
+    ...services.map((s) => ({ url: `${site.url}/services/${s.slug}`, lastModified, priority: 0.9 })),
   ];
 }

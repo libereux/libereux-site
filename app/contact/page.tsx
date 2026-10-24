@@ -5,9 +5,9 @@ import { PageHead } from "@/components/Blocks";
 import { site } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Book a Free Consultation",
+  title: "Book a Free 30-Minute Consultation",
   description:
-    "Book a free, no-pressure consultation with Libereux Digital Solutions. Tell us about your business and get a plain-language plan and a firm price.",
+    "Book a free 30-minute consultation with James Collins about AI, automation, websites, apps or smart home. Online worldwide, or in person.",
   alternates: { canonical: "/contact" },
   openGraph: og("/contact"),
 };
@@ -16,23 +16,33 @@ export default function ContactPage() {
   return (
     <>
       <PageHead
-        crumbs={[{ href: "/", label: "Home" }, { href: "/contact", label: "Book a free call" }]}
+        crumbs={[
+          { href: "/", label: "Home" },
+          { href: "/contact", label: "Contact" },
+        ]}
         title="Book a free consultation."
-        lede="Tell us a little about your business. We will reply to find a time that works for you."
+        lede="Thirty minutes with James Collins, online from anywhere or in person where he is working. Tell us a little about your business and we will find a time."
       />
       <section className="section">
         <div className="wrap split">
           <ContactForm />
           <div className="prose">
-            <h2 style={{ fontSize: "var(--step-2)" }}>What happens next</h2>
+            <h2>What happens next</h2>
             <ol className="plain-list">
-              <li>We reply to set up a short video or phone call.</li>
-              <li>We talk about your business, your customers and what you need.</li>
-              <li>You get a plain-language plan and a firm price, with no obligation.</li>
+              <li>We reply to set up a time that suits your time zone.</li>
+              <li>We talk about your business, your goals and what is slowing you down.</li>
+              <li>You leave with clear next steps. If you want our help, you get a written scope with the price before any work starts.</li>
             </ol>
-            <p className="muted">
-              Prefer email? Write to <a href={`mailto:${site.email}`}>{site.email}</a>.
-            </p>
+            <h2>Prefer to reach out directly?</h2>
+            <ul className="contact-lines">
+              <li>
+                <a href={`mailto:${site.email}`}>{site.email}</a>
+              </li>
+              <li>
+                <a href={site.phoneHref}>{site.phone}</a>
+              </li>
+              <li className="muted">{site.reach}</li>
+            </ul>
             <p className="muted">
               Calls are in English. If that is hard for you, we can work by email and translate
               proposals and recaps.

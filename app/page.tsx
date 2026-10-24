@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { og } from "@/lib/seo";
 import Link from "next/link";
+import { og } from "@/lib/seo";
 import HeroDemo from "@/components/HeroDemo";
-import Pricing from "@/components/Pricing";
+import OpportunityFinder from "@/components/OpportunityFinder";
+import SmartHomeScene from "@/components/SmartHomeScene";
+import StepsToYes from "@/components/StepsToYes";
 import JsonLd from "@/components/JsonLd";
-import { Closer, Faq, Steps, WorkCards } from "@/components/Blocks";
-import { audiences, faqs, serviceAreas, site } from "@/lib/content";
+import { Closer, Faq, Family, ServiceList, Steps } from "@/components/Blocks";
+import { faqs, frictionPoints, services, site } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: { absolute: "Affordable Websites for Small Businesses from $99 | Libereux" },
+  title: { absolute: "AI Consultant and Digital Solutions | Libereux" },
   description: site.description,
   alternates: { canonical: "/" },
   openGraph: og("/"),
@@ -24,6 +26,8 @@ const faqLd = {
   })),
 };
 
+const smartHome = services.find((s) => s.slug === "smart-home")!;
+
 export default function Home() {
   return (
     <>
@@ -32,65 +36,136 @@ export default function Home() {
       <section className="hero" aria-labelledby="hero-title">
         <div className="wrap hero-grid">
           <div className="hero-copy">
-            <h1 id="hero-title">A website that brings customers to your door.</h1>
-            <p className="price-callout">
-              <strong>From $99.</strong>
-              <span>Ready in as little as one business day.</span>
-            </p>
+            <h1 id="hero-title">Make AI work for your business.</h1>
             <p className="lede">
-              Websites, apps and business tools for restaurants, salons, realtors and contractors.
-              Plain talk, prices you can see, and a real person who picks up.
+              Your single source for &ldquo;How do I use AI?&rdquo; and &ldquo;Can you build this for
+              me?&rdquo; Strategy, assistants and automations, websites and apps, and smart home design,
+              from one person who explains it plainly and then builds it.
             </p>
             <div className="btn-row">
               <Link href="/contact" className="btn btn-primary">
                 Book a free consultation
               </Link>
-              <Link href="/pricing" className="btn btn-ghost">
-                See prices
+              <Link href="/services" className="btn btn-ghost">
+                See what we do
               </Link>
             </div>
             <p className="trust-line">
-              The consultation is free. You see your site before it goes live.
+              Free and 30 minutes, with {site.founder}. Online from anywhere, or in person where he is
+              working. {site.reach}
             </p>
           </div>
           <HeroDemo />
         </div>
       </section>
 
-      <section className="section section-paper" aria-labelledby="who-title">
+      <section className="section section-paper" aria-labelledby="questions-title">
         <div className="wrap">
           <div className="section-head">
-            <h2 id="who-title">Built for the businesses big agencies skip.</h2>
+            <h2 id="questions-title">Two questions, one partner.</h2>
             <p className="lede">
-              Most of our clients have never had a website, or have one they are embarrassed by.
-              Customers search on their phones first. We make sure they find you.
+              Advice and delivery usually come from different people, so plans and results drift
+              apart. Here they come from the same place.
             </p>
           </div>
-          <div className="audience">
-            {audiences.map((a) => (
-              <div className="audience-item" key={a.id}>
-                <h3>{a.name}</h3>
-                <p className="muted">{a.line}</p>
-              </div>
-            ))}
+          <div className="two-q">
+            <div className="q-card">
+              <h3>&ldquo;How do I use AI?&rdquo;</h3>
+              <p className="muted">
+                We look at how your business actually runs, show you where AI saves time or opens new
+                revenue, and give you a clear, plain-language plan with quick wins first.
+              </p>
+              <p>
+                <Link href="/services/ai-strategy">AI consultation and strategy</Link>
+              </p>
+            </div>
+            <div className="q-card q-card-dark">
+              <h3>&ldquo;Can you build this for me?&rdquo;</h3>
+              <p className="muted">
+                Assistants, automations, websites, apps and internal tools. You describe the problem,
+                and we design, build and launch the answer with you.
+              </p>
+              <p>
+                <Link href="/services/ai-implementation">AI implementation</Link>
+                {" or "}
+                <Link href="/services/websites-and-apps">Websites and apps</Link>
+              </p>
+            </div>
           </div>
-          <p className="muted" style={{ marginTop: 28 }}>
-            Serving owners in {serviceAreas.slice(0, -1).join(", ")} and {serviceAreas.at(-1)}, the
-            rest of metro Atlanta, and clients worldwide over video call.
-          </p>
         </div>
       </section>
 
-      <section className="section" id="pricing" aria-labelledby="pricing-title">
+      <section className="section" aria-labelledby="finder-title">
         <div className="wrap">
           <div className="section-head">
-            <h2 id="pricing-title">Three prices. Pick your speed.</h2>
+            <h2 id="finder-title">Where could AI help your business?</h2>
             <p className="lede">
-              Same price wherever you are. The scope is written down before you pay, so you always
-              know what you are getting.
+              Pick your type of business and what eats most of your time. You will see three places
+              to start, ranked the way we rank them in a real consultation.
             </p>
           </div>
-          <Pricing />
+          <OpportunityFinder />
+        </div>
+      </section>
+
+      <section className="section section-paper" aria-labelledby="services-title">
+        <div className="wrap">
+          <div className="section-head">
+            <h2 id="services-title">What we do</h2>
+          </div>
+          <ServiceList />
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="approach-title">
+        <div className="wrap">
+          <div className="section-head">
+            <h2 id="approach-title">We remove steps. That is the whole idea.</h2>
+            <p className="lede">
+              The easier something is, the more often it happens. Fewer steps means more bookings,
+              more replies and more finished work, so that is how we measure everything we build.
+            </p>
+          </div>
+          <div className="friction">
+            {frictionPoints.map((f, i) => (
+              <div className="friction-item" key={f.title}>
+                <div className="friction-bar" aria-hidden="true">
+                  {Array.from({ length: 6 }).map((_, j) => (
+                    <span key={j} className={j < [6, 3, 1][i] ? "on" : undefined} />
+                  ))}
+                </div>
+                <h3>{f.title}</h3>
+                <p className="muted">{f.body}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 56 }}>
+            <StepsToYes />
+          </div>
+        </div>
+      </section>
+
+      <section className="section on-ink" aria-labelledby="smart-title">
+        <div className="wrap split">
+          <div className="prose">
+            <h2 id="smart-title">{smartHome.headline}</h2>
+            <p className="lede">
+              Send a few photos of a room. You receive product recommendations, before and after
+              visuals of your own space, and a narrated walkthrough. Then James sets it up with you
+              remotely. No installation visit.
+            </p>
+            <ul className="checks">
+              <li>You buy and place the devices, or hire a local installer.</li>
+              <li>Setup happens in accounts you own, on a screen share with you present.</li>
+              <li>We never hold your passwords. If we earn a commission on a product, we say so.</li>
+            </ul>
+            <div className="btn-row">
+              <Link href="/services/smart-home" className="btn btn-primary">
+                See how it works
+              </Link>
+            </div>
+          </div>
+          <SmartHomeScene />
         </div>
       </section>
 
@@ -98,52 +173,27 @@ export default function Home() {
         <div className="wrap">
           <div className="section-head">
             <h2 id="how-title">How it works</h2>
-            <p className="lede">Four steps. You are never left guessing what happens next.</p>
+            <p className="lede">You always know what happens next, and what it costs, before work starts.</p>
           </div>
           <Steps />
         </div>
       </section>
 
-      <section className="section on-ink" aria-labelledby="work-title">
-        <div className="wrap">
-          <div className="section-head">
-            <h2 id="work-title">Real tools, running real businesses.</h2>
-            <p className="lede">
-              Beyond websites, we build the apps owners use every day to run crews, brands and
-              schedules.
-            </p>
+      <section className="section" aria-labelledby="founder-title">
+        <div className="wrap founder">
+          <div className="monogram" aria-hidden="true">
+            JC
           </div>
-          <WorkCards />
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="honest-title">
-        <div className="wrap split">
           <div className="prose">
-            <h2 id="honest-title">If now is not the right time, here is what to do for free.</h2>
-            <p className="muted">
-              We would rather you spend wisely than stretch. If a website is not in the budget yet,
-              these steps cost nothing and help customers find you today.
+            <h2 id="founder-title">One person who listens, then builds.</h2>
+            <p className="lede" style={{ maxWidth: "52ch" }}>
+              I am {site.founder}, founder of Libereux. I help people and businesses understand what
+              AI can really do for them, and then I build it. You work with me directly, from first
+              call to handover.
             </p>
-            <ol className="plain-list">
-              <li>Claim your free Google Business Profile, with your hours, phone number and photos.</li>
-              <li>Ask your five happiest customers to leave a Google review.</li>
-              <li>Make sure your name, address and phone match everywhere you are listed.</li>
-              <li>Post a few photos of your work or your food every month.</li>
-            </ol>
             <p>
-              When you are ready, <Link href="/contact">we are a call away</Link>.
+              <Link href="/about">More about James and Libereux</Link>
             </p>
-          </div>
-          <div className="prose">
-            <h2>Why owners choose us</h2>
-            <ul className="checks">
-              <li>Prices on the page, not hidden behind a sales call.</li>
-              <li>You talk to {site.founder}, the person responsible for your project.</li>
-              <li>Built on enterprise-grade secure infrastructure backed by SOC 2, ISO 27001 and GDPR-aligned practices.</li>
-              <li>Help in plain language, with translated proposals and recaps when English is hard.</li>
-              <li>Custom work is paid in milestones, never one big payment up front.</li>
-            </ul>
           </div>
         </div>
       </section>
@@ -151,36 +201,13 @@ export default function Home() {
       <section className="section section-paper" aria-labelledby="faq-title">
         <div className="wrap">
           <div className="section-head">
-            <h2 id="faq-title">Questions owners ask us</h2>
+            <h2 id="faq-title">Questions people ask</h2>
           </div>
           <Faq />
         </div>
       </section>
 
-      <section className="section-tight" aria-labelledby="divisions-title">
-        <div className="wrap">
-          <div className="section-head" style={{ marginBottom: 28 }}>
-            <h2 id="divisions-title" style={{ fontSize: "var(--step-2)" }}>
-              Part of Libereux Holdings
-            </h2>
-          </div>
-          <div className="divisions">
-            <Link className="division division-lead" href="/digital-solutions">
-              <h3>Digital Solutions</h3>
-              <p className="muted">Websites, web apps, mobile apps and project tools for small businesses.</p>
-            </Link>
-            <Link className="division" href="/procurement">
-              <h3>Procurement</h3>
-              <p className="muted">International sourcing between the United States and the Bahamas.</p>
-            </Link>
-            <Link className="division" href="/property-management">
-              <h3>Property management</h3>
-              <p className="muted">Residential rentals in Georgia, managed locally.</p>
-            </Link>
-          </div>
-        </div>
-      </section>
-
+      <Family />
       <Closer />
     </>
   );
