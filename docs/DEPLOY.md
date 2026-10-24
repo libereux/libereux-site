@@ -26,9 +26,9 @@ The domain stays registered at Squarespace. Only its DNS records change. No tran
 
 Until this is done, the form shows a message asking people to email holdings@libereux.com directly.
 
-## 4. Point the domain (only after phase 2 portals are live)
+## 4. Point the domain
 
-The tenant portal still runs on the old platform. Do this step only after the portals are rebuilt (see PORTAL_PLAN.md).
+No tenants use the old portal, so the domain can move as soon as you approve the Vercel preview. Old portal URLs temporarily redirect to the property management page until the portals are rebuilt (see PORTAL_PLAN.md).
 
 1. In Vercel, Project Settings, Domains, add `libereux.com` and `www.libereux.com`. Vercel shows the exact records to use.
 2. In Squarespace: Domains, libereux.com, DNS Settings.

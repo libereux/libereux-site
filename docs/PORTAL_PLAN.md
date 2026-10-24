@@ -1,6 +1,6 @@
 # Phase 2: Tenant and Admin Portals
 
-Goal: move the tenant portal and admin portal off the old builder platform into this codebase, so libereux.com is fully owned code. DNS does not move until this phase is done, so tenants never lose access.
+Goal: rebuild the tenant portal and admin portal in this codebase. No tenants were using the old portal and the old lead form held no records, so this is a fresh build with no data migration and no tenant invites. It does not block the website launch.
 
 ## What exists today (read from the live app's data model)
 
@@ -27,9 +27,7 @@ Goal: move the tenant portal and admin portal off the old builder platform into 
 2. Sign-in: email magic link (no passwords to forget, easier for tenants).
 3. Tenant portal: lease details, submit a work order with photos, request a lease extension, record a rent payment, see Zelle instructions.
 4. Admin portal: properties, tenants, managers, work order queue, lease requests, payment confirmation, payment settings, leads.
-5. Data migration: export every record from the old app, import into Supabase, copy lease PDFs and photos into storage and rewrite their URLs.
-6. Tenant invites: tenants cannot carry over old passwords, so each gets a one-time sign-in link by email.
-7. Side-by-side test with the property manager, then DNS cutover.
+5. Test with the property manager, then switch the temporary redirects in `next.config.ts` to the new portal pages.
 
 ## Decisions needed from James
 

@@ -175,7 +175,7 @@ export default function Home() {
             </Link>
             <Link className="division" href="/property-management">
               <h3>Property management</h3>
-              <p className="muted">Residential rentals in Georgia, with an online portal for tenants.</p>
+              <p className="muted">Residential rentals in Georgia, managed locally.</p>
             </Link>
           </div>
         </div>

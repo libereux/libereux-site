@@ -24,8 +24,8 @@ export default function PrivacyPage() {
           <h2>What we collect</h2>
           <p className="muted">
             When you fill out a form on this site, we collect what you type: usually your name,
-            email, phone number, business name and message. If you are a tenant, the tenant portal
-            stores the account and lease information needed to manage your rental.
+            email, phone number, business name and message. If you are a tenant, we keep the lease
+            and contact information needed to manage your rental.
           </p>
           <p className="muted">
             Like most websites, our hosting provider records basic technical information such as

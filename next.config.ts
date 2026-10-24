@@ -10,10 +10,11 @@ const nextConfig: NextConfig = {
       { source: "/DigitalSolutions", destination: "/digital-solutions", permanent: true },
       { source: "/Procurement", destination: "/procurement", permanent: true },
       { source: "/PrivacyPolicy", destination: "/privacy", permanent: true },
-      { source: "/TenantLogin", destination: "/tenant/login", permanent: true },
-      { source: "/TenantRegister", destination: "/tenant/register", permanent: true },
-      { source: "/TenantPortal", destination: "/tenant", permanent: true },
-      { source: "/AdminPortal", destination: "/admin", permanent: true },
+      // Temporary until the tenant and admin portals are rebuilt (docs/PORTAL_PLAN.md).
+      { source: "/TenantLogin", destination: "/property-management", permanent: false },
+      { source: "/TenantRegister", destination: "/property-management", permanent: false },
+      { source: "/TenantPortal", destination: "/property-management", permanent: false },
+      { source: "/AdminPortal", destination: "/", permanent: false },
     ];
   },
 
