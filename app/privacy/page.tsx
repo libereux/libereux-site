@@ -43,12 +43,10 @@ export default function PrivacyPage() {
               the pages you visit, to keep the site secure and working.
             </p>
 
-            <h2>The website assistant</h2>
+            <h2>The free website check</h2>
             <p className="muted">
-              When you chat with the assistant on this site, your messages are processed by our AI service
-              provider to generate replies. We do not store the conversation on our servers. If you ask it to
-              review a website, it visits that public address and reads the page. It only sends us your details
-              when you review a consultation request and press Send yourself.
+              When you run the website check, our server visits the public address you enter, reads that one page
+              and shows you the results. We do not store the address or the results.
             </p>
 
             <h2>How we use it</h2>

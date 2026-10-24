@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { og } from "@/lib/seo";
 import HeroDemo from "@/components/HeroDemo";
-import { AskBar, AskButton } from "@/components/assistant/Assistant";
 import OpportunityFinder from "@/components/OpportunityFinder";
 import SmartHomeScene from "@/components/SmartHomeScene";
 import StepsToYes from "@/components/StepsToYes";
@@ -43,13 +42,12 @@ export default function Home() {
               me?&rdquo; Strategy, assistants and automations, websites and apps, and smart home design,
               from one person who explains it plainly and then builds it.
             </p>
-            <AskBar />
             <div className="btn-row">
-              <Link href="/contact" className="btn btn-ghost">
+              <Link href="/contact" className="btn btn-primary">
                 Book a free consultation
               </Link>
-              <Link href="/services" className="btn btn-ghost">
-                See what we do
+              <Link href="/website-check" className="btn btn-ghost">
+                Check your website free
               </Link>
             </div>
             <p className="trust-line">
@@ -97,40 +95,25 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section on-ink showcase" aria-labelledby="showcase-title">
-        <div className="wrap">
-          <div className="section-head">
-            <h2 id="showcase-title">This website is our case study.</h2>
+      <section className="section on-ink" aria-labelledby="check-title">
+        <div className="wrap split">
+          <div className="prose">
+            <h2 id="check-title">How does your website score?</h2>
             <p className="lede">
-              The assistant in the corner is live AI, built the way we build them for clients. It does not
-              just chat. It reviews websites, drafts plans and prepares requests, and it shows you every
-              step it takes. Try it on your own business.
+              A free check in about 10 seconds. Fourteen checks on the things that decide whether a visitor
+              calls, books or buys, with the three fixes that matter most for your business.
             </p>
           </div>
-          <div className="show-grid">
-            <AskButton prompt="Can you review my website? It's " className="show-tile">
-              <strong>Review my website</strong>
-              <span>Paste your address. It runs 14 live checks and explains what is costing you customers.</span>
-            </AskButton>
-            <AskButton prompt="Where could AI save me time? I run a " className="show-tile">
-              <strong>Draft my AI roadmap</strong>
-              <span>Tell it about your business. It ranks where AI would help most, and what to do first.</span>
-            </AskButton>
-            <AskButton prompt="Help me plan a smart home for my " className="show-tile">
-              <strong>Plan my smart home</strong>
-              <span>Describe a room or rental. It suggests devices and scenes you can tap through.</span>
-            </AskButton>
-            <AskButton prompt="I'd like to book a free consultation with James." className="show-tile">
-              <strong>Book my consultation</strong>
-              <span>It writes the brief for James. You review it and press Send. Nothing goes out without you.</span>
-            </AskButton>
-          </div>
-          <ul className="show-rules">
-            <li>Answers in your language</li>
-            <li>Shows each step it takes</li>
-            <li>Never sends anything without your OK</li>
-            <li>Never guesses prices or invents results</li>
-          </ul>
+          <form className="check-inline" action="/website-check" method="get">
+            <label htmlFor="home-check-url">Your website address</label>
+            <div className="wc-row">
+              <input id="home-check-url" name="url" placeholder="yourbusiness.com" inputMode="url" autoComplete="url" required />
+              <button type="submit" className="btn btn-primary">
+                Check my website
+              </button>
+            </div>
+            <p className="check-inline-note">Free, no sign-up. Results are not stored.</p>
+          </form>
         </div>
       </section>
 

@@ -9,11 +9,15 @@ type Status = { kind: "idle" | "sending" | "ok" | "err"; message?: string };
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const serviceRef = useRef<HTMLSelectElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   // Preselect the service when arriving from a service page.
   useEffect(() => {
     const p = new URLSearchParams(window.location.search).get("service");
     if (p && serviceRef.current && services.some((s) => s.slug === p)) serviceRef.current.value = p;
+    // Arriving from a website check report pre-fills the note.
+    const note = new URLSearchParams(window.location.search).get("note");
+    if (note && messageRef.current && !messageRef.current.value) messageRef.current.value = note.slice(0, 1000);
   }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -82,7 +86,7 @@ export default function ContactForm() {
         <span className="hint" id="message-hint">
           A few sentences is plenty.
         </span>
-        <textarea id="message" name="message" aria-describedby="message-hint" />
+        <textarea id="message" name="message" ref={messageRef} aria-describedby="message-hint" />
       </div>
 
       <div className="hp" aria-hidden="true">
