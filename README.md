@@ -27,12 +27,12 @@ npm run lint
 - `next.config.ts`: redirects from the old site's URLs and security headers.
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
 - `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
-- `lib/pricing.ts` and `docs/PRICING_V1_DRAFT.md`: draft Pricing v1, gated off by `pricingLive = false`. Not live.
+- `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Built but hidden: `pricingLive = false`. Not live.
 
 ## House rules for copy
 
 - No em dashes.
-- No prices until pricing is final. Every engagement is scoped after the free 30-minute consultation. A draft price list exists in `lib/pricing.ts` and `docs/PRICING_V1_DRAFT.md`, switched off by `pricingLive = false`. Do not show any of it until James approves the numbers in writing.
+- No prices until pricing is final. Every engagement is scoped after the free 30-minute consultation. Approved Pricing v1 exists in `lib/pricing.ts` and `docs/PRICING_V1_DRAFT.md`, switched off by `pricingLive = false`. Do not show any price until the blockers in that document are cleared and `pricingLive` is switched on.
 - Never name build platforms or AI tools in anything client-facing. Use outcome language.
 - No case studies, testimonials or results without the client's written permission and James's approval of the wording. Never mention FASH.
 - Every promise on the site needs James's approval.

@@ -1,7 +1,9 @@
-# Pricing v1 (DRAFT, not live)
+# Pricing v1 (approved, built, switched off)
 
-Status: proposed 2026-10-24. The numbers are test values and are not approved. Nothing in this
-document is shown on libereux.com. The data lives in `lib/pricing.ts` behind `pricingLive = false`.
+Status: James Collins approved the prices, Stripe as the processor, and the custom-quote rule for
+unlisted countries on 2026-10-24. The packages page, order form and Stripe checkout are built but
+hidden: `pricingLive` in `lib/pricing.ts` is `false`, so `/packages` returns a 404 and the order API
+refuses requests. Nothing here is visible on libereux.com until that flag is switched to `true`.
 
 ## What changes in strategy
 
@@ -30,7 +32,7 @@ Price is set by billing country and labeled "regional pricing". One price is sho
 - Tier 2: Thailand, Malaysia, Mexico, South Africa
 - Tier 3: Philippines, Nigeria, India, Kenya, Ghana, Pakistan
 
-Countries not listed are not assigned a tier and go to the custom quote path. Open decision for James.
+Countries not listed are not assigned a tier and go to the custom quote path (decided by James).
 
 ## Packages (USD)
 
@@ -45,11 +47,16 @@ Countries not listed are not assigned a tier and go to the custom quote path. Op
 | AI Opportunity Audit | 149 | 79 | 49 | Written plan, credited toward a build within 30 days |
 | Care plan (per month) | 10 | 10 | 10 | Text and image swaps only |
 
-Add-ons (extra page, extra language, online booking, extra revision round, rush delivery) are
-planned at roughly 10 to 15 percent of the package price. Amounts not set.
+Add-ons (extra page, extra language, online booking, extra revision round, rush delivery) have no
+set amounts. They are collected on the order form and priced in the written scope confirmation
+before work starts. They are not charged at checkout.
 
-Confidence: only the three Starter figures come from James's earlier tier structure. Everything
-else is a guess and needs delivery-time and cost data before approval.
+The care plan ($10 per month) is a subscription, so it is set up after launch and is not part of
+checkout.
+
+Note: only the three Starter figures came from James's earlier tier structure. The rest were
+proposed by Claude and approved by James without delivery-time or cost data, so review them after
+the first real orders.
 
 ## Test plan
 
@@ -57,23 +64,40 @@ Run cart-first in some markets and consultation-first in others. Track reply rat
 starts, completed deposits, refunds and scope disputes by market. Indigo reports this weekly.
 Start only in markets rated GREEN on email compliance.
 
-## Blockers before anything goes live
+## What is built
 
-1. James approves the numbers and the copy in writing (house rule: every promise needs approval).
-2. Payments are set up for each country, and the cross-border legal and accounting review has cleared
-   checkout for that market.
-3. A decision on a payment processor. Any processor charges per transaction; that is a sales cost,
-   not a running cost, but it should be a conscious choice.
-4. A decision on countries outside the three tiers.
-5. Olive's order intake, scope confirmation template and deposit tracking exist in Drive.
+- `/packages`: package list with the regional price, extras, a "does your project include any of
+  these" check, and the order form. Hidden while `pricingLive` is false.
+- `/packages/thanks`: what happens after the deposit.
+- `POST /api/order`: validates the brief and recomputes the price on the server from `lib/pricing.ts`.
+  Sends complex projects, unlisted countries, "not sure" requests and empty carts to a written-quote
+  email. Otherwise creates a Stripe Checkout Session for the 50 percent deposit (one line per package,
+  billing address required) and emails James that a checkout started.
+- `POST /api/stripe-webhook`: verifies Stripe's signature, emails James when a deposit is paid, and
+  flags the order if the billing country on the card differs from the country the price was based on.
+- The sitemap lists `/packages` only when `pricingLive` is true.
 
-## Site work still to build (not started)
+Tested locally with the flag off (pages 404, API 404, no sitemap entry) and on (pages 200, bad input
+400, no Stripe key 503, unlisted country goes to the quote path, signed webhook accepted, forged
+webhook rejected, mismatch flagged). Not tested against real Stripe or real email: that needs the keys.
 
-- `/packages` page showing the cart, with the regional price and a "regional pricing" label.
-- Order brief form (short, plain language), stored by email or Drive, no paid services.
-- "Not sure / custom" request path and the 24 hour quote promise.
-- Updates to the FAQ ("What does it cost?"), how-it-works steps, the home page and services pages,
-  the `site.description`, and the README house rule on prices.
-- Billing-country price selection that cannot be changed by browsing from another country.
-- Sitemap and structured data for the new page.
-- Release only by switching `pricingLive` to true after the blockers above are cleared.
+## Blockers before switching it on
+
+1. Create the Stripe account for Libereux Holdings, LLC and confirm which countries and payment
+   methods it can accept. Support for the Tier 3 countries is unverified.
+2. In Netlify, add `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. In Stripe, add a webhook endpoint
+   at `https://libereux.com/api/stripe-webhook` for `checkout.session.completed`. Use test keys first.
+3. The cross-border legal and accounting review clears checkout for each market.
+4. Publish terms and a refund policy and link them from `/packages`. Update `/privacy` to cover order
+   details and payment processing. These need James's approval of the wording.
+5. Olive has the order intake, scope confirmation template and deposit tracking ready in Drive.
+6. Update the site copy that still says every engagement is scoped after a consultation: the FAQ
+   ("What does it cost?"), `/how-it-works`, the home and services pages, `site.description`, and the
+   README house rule on prices. Add a link to `/packages` in the header and footer.
+7. Run a test purchase in Stripe test mode end to end, then set `pricingLive = true`.
+
+## Not decided yet
+
+- Whether prices should also be shown on the service pages.
+- Whether to auto-detect country as a suggestion. Today the visitor chooses their billing country
+  and the webhook flags a mismatch.

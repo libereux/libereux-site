@@ -1,8 +1,7 @@
-// Pricing v1 (DRAFT). Not shown anywhere on the site while `pricingLive` is false.
-// Status: prices are test values proposed on 2026-10-24 and NOT approved by James Collins.
-// Do not turn this on, and do not render any value from this file, until James approves
-// the numbers in writing, payments are set up per country, and the cross-border legal and
-// accounting review has cleared checkout for that market.
+// Pricing v1. Not shown anywhere on the site while `pricingLive` is false.
+// Status: James Collins approved these prices on 2026-10-24 (in chat). They stay switched off
+// until Stripe is configured, the cross-border legal and accounting review has cleared
+// checkout for each market, and terms and a refund policy are published.
 // Rules: no em dashes, no build platform or AI tool names in any customer-facing text.
 
 export const pricingLive = false;
@@ -10,7 +9,7 @@ export const pricingLive = false;
 export type RegionTier = 1 | 2 | 3;
 
 // Price is set by billing country. Countries not listed here are not assigned a tier and
-// route to the custom quote path until James decides (open decision).
+// route to the custom quote path (decided by James on 2026-10-24).
 export const regionTierByCountry: Record<string, RegionTier> = {
   // Tier 1
   US: 1,
@@ -108,8 +107,8 @@ export const packages: Package[] = [
   },
 ];
 
-// Add-ons, roughly 10 to 15 percent of the package price each. Placeholder percentages
-// until James sets real amounts.
+// Add-ons are listed for the order brief only. Their amounts are not set, so they are not
+// charged at checkout. They are priced in the written scope confirmation before work starts.
 export const addOns = [
   "Extra page",
   "Extra language",
@@ -137,4 +136,33 @@ export function tierForCountry(countryCode: string | null | undefined): RegionTi
 
 export function priceFor(pkg: Package, tier: RegionTier): number {
   return tier === 1 ? pkg.price.tier1 : tier === 2 ? pkg.price.tier2 : pkg.price.tier3;
+}
+
+export const countryOptions: { code: string; name: string }[] = [
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "CA", name: "Canada" },
+  { code: "AU", name: "Australia" },
+  { code: "TH", name: "Thailand" },
+  { code: "MY", name: "Malaysia" },
+  { code: "MX", name: "Mexico" },
+  { code: "ZA", name: "South Africa" },
+  { code: "PH", name: "Philippines" },
+  { code: "NG", name: "Nigeria" },
+  { code: "IN", name: "India" },
+  { code: "KE", name: "Kenya" },
+  { code: "GH", name: "Ghana" },
+  { code: "PK", name: "Pakistan" },
+];
+
+// The care plan is a subscription and is set up after launch, not at checkout.
+export const isCheckoutPackage = (pkg: Package) => pkg.recurring === undefined;
+
+export function findPackage(id: string): Package | undefined {
+  return packages.find((p) => p.id === id);
+}
+
+// Deposit in US cents for one package at a tier.
+export function depositCents(pkg: Package, tier: RegionTier): number {
+  return Math.round((priceFor(pkg, tier) * 100 * depositPercent) / 100);
 }
