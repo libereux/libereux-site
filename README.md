@@ -20,7 +20,7 @@ npm run lint
   `HeroDemo` (AI assistant chat), `OpportunityFinder` (AI strategy), `StepsToYes` (websites and apps),
   `SmartHomeScene` (smart home), `SearchPreview` (SEO).
 - `app/website-check/`, `components/WebsiteCheck.tsx`, `lib/website-check/`: the free website check. 14 weighted checks, plain-language report, shareable link, print to PDF. Runs on free serverless functions with no paid services. Private and internal network addresses are blocked.
-- The earlier live AI assistant is archived in git under the tag `assistant-v1` (it needs a paid API key).
+- The earlier live AI assistant is archived on the branch `archive/assistant-v1` (it needs a paid API key).
 - `proxy.ts`: the one old URL (`/Procurement`) that needs an exact-case redirect.
 - `app/api/contact/route.ts`: sends the consultation form by email (needs `RESEND_API_KEY`).
 - `next.config.ts`: redirects from the old site's URLs and security headers.
