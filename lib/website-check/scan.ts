@@ -187,7 +187,7 @@ export async function checkWebsite(input: string): Promise<Report> {
     mk(
       "mobile",
       "Works on phones",
-      /width\s*=\s*device-width/i.test(viewport),
+      /width\s*=\s*device-width|initial-scale\s*=\s*1/i.test(viewport),
       viewport ? "The page is set up for phone screens." : "No mobile setting, so phones may show a shrunken desktop page.",
       9,
       "A page that is tiny or needs zooming on a phone feels broken, and visitors leave before reading anything.",
