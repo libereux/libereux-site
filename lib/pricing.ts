@@ -1,10 +1,15 @@
-// Pricing v1. Not shown anywhere on the site while `pricingLive` is false.
-// Status: James Collins approved these prices on 2026-10-24 (in chat). They stay switched off
-// until Stripe is configured, the cross-border legal and accounting review has cleared
-// checkout for each market, and terms and a refund policy are published.
+// Pricing v1. `pricingLive` false hides everything; `pricingLive` true with `pricingPublic` false is the soft launch.
+// Status: James Collins approved these prices on 2026-10-24 (in chat). Checkout was switched on
+// for a soft launch (direct link only) the same day, after Stripe was configured and the terms,
+// refund policy and privacy update were published. A legal professional has not reviewed them yet,
+// and the cross-border legal and accounting review is still open.
 // Rules: no em dashes, no build platform or AI tool names in any customer-facing text.
 
-export const pricingLive = false;
+export const pricingLive = true;
+
+// Soft launch: while false, /packages works for anyone with the link but is not in the sitemap,
+// not linked from the menu, and is marked noindex. Switch to true to launch it publicly.
+export const pricingPublic = false;
 
 export type RegionTier = 1 | 2 | 3;
 

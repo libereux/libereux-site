@@ -28,12 +28,12 @@ npm run lint
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
 - `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
 - `app/terms/`, `app/refund-policy/`: published terms and refund policy (approved by James 2026-10-24, awaiting legal review). `docs/TERMS_AND_REFUNDS_DRAFT.md` is the original draft.
-- `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Built but hidden: `pricingLive = false`. Not live.
+- `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Soft launch since 2026-10-24: `pricingLive = true`, `pricingPublic = false` (direct link only, noindex, no sitemap or menu entry).
 
 ## House rules for copy
 
 - No em dashes.
-- No prices until pricing is final. Every engagement is scoped after the free 30-minute consultation. Approved Pricing v1 exists in `lib/pricing.ts` and `docs/PRICING_V1_DRAFT.md`, switched off by `pricingLive = false`. Do not show any price until the blockers in that document are cleared and `pricingLive` is switched on.
+- No prices until pricing is final. Every engagement is scoped after the free 30-minute consultation. Approved Pricing v1 is in soft launch (`lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`). Do not show prices on public pages, menus or the sitemap until `pricingPublic` is switched on.
 - Never name build platforms or AI tools in anything client-facing. Use outcome language.
 - No case studies, testimonials or results without the client's written permission and James's approval of the wording. Never mention FASH.
 - Every promise on the site needs James's approval.

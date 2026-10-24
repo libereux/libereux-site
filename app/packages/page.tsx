@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { og } from "@/lib/seo";
-import { pricingLive } from "@/lib/pricing";
+import { pricingLive, pricingPublic } from "@/lib/pricing";
 import { PageHead } from "@/components/Blocks";
 import PackagesOrder from "@/components/PackagesOrder";
 import { site } from "@/lib/content";
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description:
     "Fixed-price websites, AI assistants and automations. Choose a package, pay a 50 percent deposit, and get a written scope before work starts. Or book a free consultation.",
   alternates: { canonical: "/packages" },
+  robots: pricingPublic ? undefined : { index: false, follow: false },
   openGraph: og("/packages"),
 };
 
