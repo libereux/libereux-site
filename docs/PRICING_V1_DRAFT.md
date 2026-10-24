@@ -1,9 +1,10 @@
-# Pricing v1 (approved, built, switched off)
+# Pricing v1 (approved, soft launch)
 
-Status: James Collins approved the prices, Stripe as the processor, and the custom-quote rule for
-unlisted countries on 2026-10-24. The packages page, order form and Stripe checkout are built but
-hidden: `pricingLive` in `lib/pricing.ts` is `false`, so `/packages` returns a 404 and the order API
-refuses requests. Nothing here is visible on libereux.com until that flag is switched to `true`.
+Status: James Collins approved the prices, Stripe as the processor, the custom-quote rule for unlisted
+countries, and the terms wording on 2026-10-24. Checkout is switched on as a soft launch:
+`pricingLive = true` and `pricingPublic = false` in `lib/pricing.ts`. `/packages` works for anyone with
+the link, but it is not in the sitemap, not linked from the menu, and is marked noindex. To launch
+publicly, set `pricingPublic = true`, add the menu link, and update the site copy listed below.
 
 ## What changes in strategy
 
@@ -81,7 +82,7 @@ Tested locally with the flag off (pages 404, API 404, no sitemap entry) and on (
 400, no Stripe key 503, unlisted country goes to the quote path, signed webhook accepted, forged
 webhook rejected, mismatch flagged). Not tested against real Stripe or real email: that needs the keys.
 
-## Blockers before switching it on
+## Still open before a public launch
 
 1. Create the Stripe account for Libereux Holdings, LLC and confirm which countries and payment
    methods it can accept. Support for the Tier 3 countries is unverified.
