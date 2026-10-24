@@ -7,9 +7,9 @@
 
 export const pricingLive = true;
 
-// Soft launch: while false, /packages works for anyone with the link but is not in the sitemap,
-// not linked from the menu, and is marked noindex. Switch to true to launch it publicly.
-export const pricingPublic = false;
+// Public launch (2026-10-24, James Collins): /packages is in the sitemap, linked from the menu and indexable.
+// Set to false to return to soft launch (direct link only, noindex, no sitemap or menu entry).
+export const pricingPublic = true;
 
 export type RegionTier = 1 | 2 | 3;
 

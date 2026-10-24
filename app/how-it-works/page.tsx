@@ -5,9 +5,9 @@ import StepsToYes from "@/components/StepsToYes";
 import { frictionPoints, site } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "How It Works: Consultation to Finished Build",
+  title: "How It Works: From First Step to Finished Build",
   description:
-    "A free 30-minute consultation, a written scope with the price before work starts, regular check-ins during the build, and support after launch.",
+    "Choose a fixed-price package or book a free consultation, get a written scope before work starts, regular check-ins during the build, and support after launch.",
   alternates: { canonical: "/how-it-works" },
   openGraph: og("/how-it-works"),
 };

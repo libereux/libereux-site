@@ -1,7 +1,7 @@
 // Single source of truth for site copy.
 // Direction approved by James Collins on 2026-10-21: Digital Solutions leads, AI first,
 // global and fully virtual, Procurement and Real Estate in a "Libereux family" strip.
-// Rules: no em dashes, no prices, no build platform or AI tool names, no case studies or
+// Rules: no em dashes, prices only from lib/pricing.ts, no build platform or AI tool names, no case studies or
 // testimonials without the client's written permission, every promise approved by James.
 // Service copy comes from the Pitch Kit one-pagers in Drive (Libereux / Digital Solutions).
 
@@ -230,8 +230,8 @@ export const services: Service[] = [
 
 export const engagementSteps = [
   {
-    title: "Conversation",
-    body: "A free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where James is working.",
+    title: "Start",
+    body: "Choose a package and pay a 50 percent deposit, or book a free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where James is working.",
   },
   {
     title: "Recommendation",
@@ -273,8 +273,12 @@ export const faqs = [
     a: "Yes. The first consultation is 30 minutes, free, and comes with no obligation.",
   },
   {
+    q: "Can I order without a call?",
+    a: "Yes. Choose a package on the Packages page, pay the deposit, and we send you a short written scope to confirm. If you would rather talk first, the free consultation is always available.",
+  },
+  {
     q: "What does it cost?",
-    a: "Every engagement is different, so we scope it after the free consultation. You receive a written scope with the price before any work starts.",
+    a: "Our packages have fixed prices that you can see on the Packages page, set by your billing country. You pay a 50 percent deposit to start, and you receive a written scope before any work begins. Larger or custom projects are quoted in writing after a free consultation.",
   },
   {
     q: "Do you work outside the United States?",
