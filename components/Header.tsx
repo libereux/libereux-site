@@ -74,7 +74,7 @@ export default function Header() {
             ))}
             <li>
               <Link href="/contact" className="btn btn-primary" onClick={() => setOpen(false)}>
-                Book a free consultation
+                Book a free 30-minute consultation
               </Link>
             </li>
           </ul>

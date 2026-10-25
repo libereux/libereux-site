@@ -68,7 +68,7 @@ export function Family() {
 
 export function Closer({
   title = "Have a question about AI, or something you want built?",
-  body = "Start with a free 30-minute consultation with James Collins, online from anywhere or in person where he is working. You will leave with clear next steps, and no obligation.",
+  body = "Start with a free 30-minute consultation with James Collins, on an online video call. You will leave with clear next steps, and no obligation.",
   service,
 }: {
   title?: string;
@@ -82,7 +82,7 @@ export function Closer({
         <p className="lede">{body}</p>
         <div className="btn-row">
           <Link href={service ? `/contact?service=${service}` : "/contact"} className="btn btn-primary">
-            Book a free consultation
+            Book a free 30-minute consultation
           </Link>
           <Link href="/how-it-works" className="btn btn-ghost">
             How it works

@@ -131,7 +131,7 @@ export default function OpportunityFinder() {
         </ol>
         <p className="finder-foot">
           These are starting points. Your free consultation turns them into a plan for your business.{" "}
-          <Link href="/contact?service=ai-strategy">Get your AI roadmap</Link>
+          <Link href="/contact?service=ai-strategy">Book a free 30-minute consultation</Link>
         </p>
       </div>
     </div>

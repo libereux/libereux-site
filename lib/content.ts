@@ -70,7 +70,7 @@ export const services: Service[] = [
       "Advice from the same person who can build what is recommended.",
       "Clear, jargon-free explanations that make decisions easier.",
       "Recommendations shaped around your business, never a generic template.",
-      "Available in person where James is working, or online anywhere.",
+      "Online video calls, from anywhere.",
     ],
     cta: "Get your AI roadmap.",
   },
@@ -146,7 +146,7 @@ export const services: Service[] = [
       "More than a web developer: strategy, AI and build in one place.",
       "Clear communication and visible progress at every stage.",
       "Built to be easy for you and your team to use and update.",
-      "Work with James in person where he is, or online anywhere.",
+      "Work with James on online video calls, from anywhere.",
     ],
     cta: "Tell us what you want to build.",
   },
@@ -231,7 +231,7 @@ export const services: Service[] = [
 export const engagementSteps = [
   {
     title: "Start",
-    body: "Choose a package and pay a 50 percent deposit, or book a free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where James is working.",
+    body: "Choose a package and pay a 50 percent deposit, or book a free 30-minute consultation about your business, your goals and what is slowing you down. Every meeting is an online video call.",
   },
   {
     title: "Recommendation",
@@ -278,15 +278,15 @@ export const faqs = [
   },
   {
     q: "What does it cost?",
-    a: "Our packages have fixed prices that you can see on the Packages page, set by your billing country. You pay a 50 percent deposit to start, and you receive a written scope before any work begins. Larger or custom projects are quoted in writing after a free consultation.",
+    a: "Our packages have fixed prices that you can see on the Packages page, set by your billing country. You pay a 50 percent deposit to start, and you receive a written scope before any work begins. Larger or custom projects get a written quote within 24 hours, and the free 30-minute consultation is optional.",
   },
   {
     q: "Do you work outside the United States?",
-    a: "Yes. Everything can be done online, from anywhere in the world, and James also meets clients in person in the cities where he is working.",
+    a: "Yes. Everything can be done online, from anywhere in the world, and every meeting is an online video call.",
   },
   {
     q: "What if English is not my first language?",
-    a: "Calls are in English. If that is hard for you or your team, we can work by email and translate proposals and call recaps in both directions.",
+    a: "Proposals and call recaps can be translated in both directions. Calls are in English, and if that is hard for you or your team, we can work by email.",
   },
   {
     q: "Do you install smart home devices?",

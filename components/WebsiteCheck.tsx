@@ -92,7 +92,7 @@ export default function WebsiteCheck() {
     ? `/contact?service=website-updates-seo&note=${encodeURIComponent(
         `I ran the free website check on ${report.host} (score ${report.score}/100). ${
           report.topFixes.length ? `Top fixes: ${report.topFixes.map((f) => f.label).join(", ")}.` : ""
-        } I'd like a walkthrough.`,
+        } I'd like a free 30-minute consultation.`,
       )}`
     : "/contact";
 
@@ -197,7 +197,7 @@ export default function WebsiteCheck() {
 
           <div className="wc-actions">
             <Link href={bookHref} className="btn btn-primary">
-              Book a free walkthrough of this report
+              Book a free 30-minute consultation
             </Link>
             <button
               type="button"

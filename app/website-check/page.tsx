@@ -31,7 +31,8 @@ const groups = [
       "Business details for search engines",
       "Image descriptions",
       "Preview image when the link is shared",
-      "Page language and main address",
+      "Page language",
+      "Main address",
     ],
   },
   {
@@ -43,7 +44,7 @@ const groups = [
 const checkFaqs = [
   {
     q: "Is the website check really free?",
-    a: "Yes. There is no sign-up and no cost. If you want help with the fixes, you can book a free 30-minute walkthrough with James Collins.",
+    a: "Yes. There is no sign-up and no cost. If you want help with the fixes, you can book a free 30-minute consultation with James Collins.",
   },
   {
     q: "Do you store my website or my results?",
@@ -120,7 +121,7 @@ export default function WebsiteCheckPage() {
 
       <Closer
         title="Want the fixes done for you?"
-        body="Book a free 30-minute consultation with James Collins. He will walk you through your report and what to fix first, online from anywhere or in person where he is working."
+        body="Book a free 30-minute consultation with James Collins. He will walk you through your report and what to fix first, on an online video call."
         service="website-updates-seo"
       />
     </>

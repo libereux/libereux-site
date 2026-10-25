@@ -35,13 +35,12 @@ export default function AboutPage() {
             </p>
             <p className="muted">
               My background is in enterprise project management and Agile delivery, keeping complex
-              technology programs on track inside large organizations, including The Walt Disney
-              Company, Inspire Brands and The Home Depot. I bring the same discipline to every engagement, whatever
-              its size: understand the business first, scope it honestly, and deliver what was agreed.
+              technology programs on track inside large organizations. I bring the same discipline to every
+              engagement, whatever its size: understand the business first, scope it honestly, and deliver what was agreed.
             </p>
             <p className="muted">
-              I work fully remotely with clients anywhere in the world, and meet people in person in
-              the cities where I am working.
+              I work fully remotely with clients anywhere in the world, and every meeting is an online
+              video call.
             </p>
           </div>
         </div>

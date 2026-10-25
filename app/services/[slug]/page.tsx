@@ -189,7 +189,7 @@ export default async function ServicePage({ params }: Props) {
 
       <Closer
         title={s.cta}
-        body={`Book a free 30-minute consultation with ${site.founder}, in person wherever he is working or online.`}
+        body={`Book a free 30-minute consultation with ${site.founder}, on an online video call.`}
         service={s.slug}
       />
     </>

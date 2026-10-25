@@ -60,7 +60,7 @@ export const packages: Package[] = [
   {
     id: "website-plus",
     name: "Website Plus",
-    summary: "The one most owners choose: more pages, booking or lead capture, and search setup.",
+    summary: "More pages, booking or lead capture, and search setup.",
     includes: ["Up to 8 pages", "Booking or lead capture", "Basic search setup", "2 revision rounds"],
     turnaround: "5 business days",
     price: { tier1: 1150, tier2: 575, tier3: 325 },
@@ -68,8 +68,8 @@ export const packages: Package[] = [
   {
     id: "website-pro",
     name: "Website Pro",
-    summary: "Everything in Plus, with a second language and priority delivery.",
-    includes: ["Everything in Website Plus", "A second language", "Priority turnaround"],
+    summary: "Everything in Plus, with a second language.",
+    includes: ["Everything in Website Plus", "A second language"],
     turnaround: "3 business days",
     price: { tier1: 1600, tier2: 800, tier3: 450 },
   },
@@ -97,8 +97,8 @@ export const packages: Package[] = [
   {
     id: "ai-audit",
     name: "AI Opportunity Audit",
-    summary: "A written plan for where AI helps your business. Credited toward any build within 30 days.",
-    includes: ["Written plan", "Prioritized opportunities", "Credit toward a build within 30 days"],
+    summary: "A written plan for where AI helps your business, fully credited toward a build within 30 days.",
+    includes: ["Written plan", "Fully credited toward a build within 30 days"],
     price: { tier1: 149, tier2: 79, tier3: 49 },
     creditedToBuild: true,
   },
@@ -122,10 +122,10 @@ export const addOns = [
   "Rush delivery",
 ];
 
-// Orders that must go to a consultation or the paid audit instead of checkout.
+// Orders that get a written quote (within 24 hours) or the paid audit instead of checkout.
 export const routeToConsultation = [
   "Integrations with existing systems",
-  "E-commerce beyond the agreed limit",
+  "Large e-commerce",
   "Storing customer data",
   "Multiple locations",
   "Custom apps",
