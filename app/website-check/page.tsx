@@ -31,7 +31,8 @@ const groups = [
       "Business details for search engines",
       "Image descriptions",
       "Preview image when the link is shared",
-      "Page language and main address",
+      "Page language",
+      "Main address",
     ],
   },
   {

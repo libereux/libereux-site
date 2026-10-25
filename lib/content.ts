@@ -14,7 +14,7 @@ export const site = {
   phoneHref: "tel:+16784630804",
   founder: "James Collins",
   location: "Georgia, USA",
-  reach: "Fully remote. Working with clients worldwide.",
+  reach: "Online worldwide, and in person where James is working.",
   consultation: "free 30-minute consultation",
   description:
     "AI consulting, assistants and automations, websites and apps, smart home design and SEO. Free 30-minute consultation with James Collins, online worldwide.",

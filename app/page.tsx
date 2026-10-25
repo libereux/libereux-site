@@ -54,8 +54,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="trust-line">
-              Free and 30 minutes, with {site.founder}. Online from anywhere, or in person where he is
-              working. {site.reach}
+              Free and 30 minutes, with {site.founder}. {site.reach}
             </p>
           </div>
           <HeroDemo />
