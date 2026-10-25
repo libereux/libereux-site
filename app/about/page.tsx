@@ -30,8 +30,8 @@ export default function AboutPage() {
             <h2>Meet James</h2>
             <p className="lede" style={{ maxWidth: "56ch" }}>
               I am {site.founder}, founder of Libereux. I help people and businesses understand what
-              AI can really do for them, and then I build it. You work with me directly, from the first
-              call to handover.
+              AI can really do for them, and then we build it. I lead every engagement myself, from the
+              first call to handover.
             </p>
             <p className="muted">
               My background is in enterprise project management and Agile delivery, keeping complex

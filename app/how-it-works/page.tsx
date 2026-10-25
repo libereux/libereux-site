@@ -35,10 +35,10 @@ export default function HowItWorksPage() {
           <div className="prose">
             <h2 id="count-title">What you can count on</h2>
             <ul className="checks">
-              <li>You work directly with {site.founder}, from the first call to handover.</li>
+              <li>{site.founder} leads every engagement, from the first call to handover.</li>
               <li>A written scope with the price before any work starts.</li>
               <li>Plain language, with no jargon and no hard sell.</li>
-              <li>Online from anywhere, or in person where James is working.</li>
+              <li>Online from anywhere, or in person where we are working.</li>
               <li>Translated proposals and call recaps when English is hard for you or your team.</li>
             </ul>
           </div>
