@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     console.error("Booking failed", e);
     const status = e instanceof BookingError ? e.status : 500;
     return Response.json(
-      { error: "We could not complete the booking. You can still send a normal request and James will reply." },
+      { error: "We could not complete the booking. You can still send a normal request and we will reply." },
       { status: status === 503 ? 503 : 502 },
     );
   }

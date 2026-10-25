@@ -40,7 +40,7 @@ export default function Home() {
             <p className="lede">
               Your single source for &ldquo;How do I use AI?&rdquo; and &ldquo;Can you build this for
               me?&rdquo; Strategy, assistants and automations, websites and apps, and smart home design,
-              from one person who explains it plainly and then builds it.
+              in one place, explained plainly and then built for you.
             </p>
             <div className="btn-row">
               <Link href="/contact" className="btn btn-primary">
@@ -54,8 +54,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="trust-line">
-              Free and 30 minutes, with {site.founder}. Online from anywhere, or in person where he is
-              working. {site.reach}
+              Free and 30 minutes, with {site.founder}. {site.reach}
             </p>
           </div>
           <HeroDemo />
@@ -176,7 +175,7 @@ export default function Home() {
             <h2 id="smart-title">{smartHome.headline}</h2>
             <p className="lede">
               Send a few photos of a room. You receive product recommendations, before and after
-              visuals of your own space, and a narrated walkthrough. Then James sets it up with you
+              visuals of your own space, and a narrated walkthrough. Then we set it up with you
               remotely. No installation visit.
             </p>
             <ul className="checks">
@@ -210,11 +209,11 @@ export default function Home() {
             JC
           </div>
           <div className="prose">
-            <h2 id="founder-title">One person who listens, then builds.</h2>
+            <h2 id="founder-title">Led by someone who listens, then builds.</h2>
             <p className="lede" style={{ maxWidth: "52ch" }}>
               I am {site.founder}, founder of Libereux. I help people and businesses understand what
-              AI can really do for them, and then I build it. You work with me directly, from first
-              call to handover.
+              AI can really do for them, and then we build it. I lead every engagement myself, from
+              the first call to handover.
             </p>
             <p>
               <Link href="/about">More about James and Libereux</Link>

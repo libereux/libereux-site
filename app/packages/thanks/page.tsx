@@ -27,7 +27,7 @@ export default function ThanksPage() {
           <ol className="plain-list">
             <li>You will receive a receipt from our payment provider by email.</li>
             <li>
-              Before any work starts, {site.founder} sends you a short written scope listing exactly what is and is not
+              Before any work starts, we send you a short written scope listing exactly what is and is not
               included. Reply to confirm it.
             </li>
             <li>Work begins once you have confirmed the scope.</li>

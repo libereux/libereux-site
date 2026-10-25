@@ -14,7 +14,7 @@ export const site = {
   phoneHref: "tel:+16784630804",
   founder: "James Collins",
   location: "Georgia, USA",
-  reach: "Fully remote. Working with clients worldwide.",
+  reach: "Online worldwide, and in person where we are working.",
   consultation: "free 30-minute consultation",
   description:
     "AI consulting, assistants and automations, websites and apps, smart home design and SEO. Free 30-minute consultation with James Collins, online worldwide.",
@@ -70,7 +70,7 @@ export const services: Service[] = [
       "Advice from the same person who can build what is recommended.",
       "Clear, jargon-free explanations that make decisions easier.",
       "Recommendations shaped around your business, never a generic template.",
-      "Available in person where James is working, or online anywhere.",
+      "Available in person where we are working, or online anywhere.",
     ],
     cta: "Get your AI roadmap.",
   },
@@ -146,7 +146,7 @@ export const services: Service[] = [
       "More than a web developer: strategy, AI and build in one place.",
       "Clear communication and visible progress at every stage.",
       "Built to be easy for you and your team to use and update.",
-      "Work with James in person where he is, or online anywhere.",
+      "Work with us in person where we are, or online anywhere.",
     ],
     cta: "Tell us what you want to build.",
   },
@@ -170,7 +170,7 @@ export const services: Service[] = [
       "Personalized product recommendations for your space and lifestyle.",
       "Before and after visuals of your own rooms, created from photos you send.",
       "A narrated walkthrough of your space showing how everything works together.",
-      "Remote setup by James himself, in accounts you own, on a screen share with you present.",
+      "Remote setup by our team, in accounts you own, on a screen share with you present.",
       "Simple guidance so everyone at home feels confident using it.",
     ],
     steps: [
@@ -178,7 +178,7 @@ export const services: Service[] = [
       { title: "Plan", body: "We recommend products that fit your rooms, routines and style." },
       { title: "Visualize", body: "You receive before and after visuals and a narrated walkthrough." },
       { title: "Buy and place", body: "You buy the devices and place them yourself, or hire a local installer." },
-      { title: "Set up together", body: "James configures everything remotely in your own accounts, on a screen share with you present." },
+      { title: "Set up together", body: "We configure everything remotely in your own accounts, on a screen share with you present." },
     ],
     why: [
       "You see the result in your own space before you commit.",
@@ -231,7 +231,7 @@ export const services: Service[] = [
 export const engagementSteps = [
   {
     title: "Start",
-    body: "Choose a package and pay a 50 percent deposit, or book a free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where James is working.",
+    body: "Choose a package and pay a 50 percent deposit, or book a free 30-minute consultation about your business, your goals and what is slowing you down. Online, or in person where we are working.",
   },
   {
     title: "Recommendation",
@@ -282,7 +282,7 @@ export const faqs = [
   },
   {
     q: "Do you work outside the United States?",
-    a: "Yes. Everything can be done online, from anywhere in the world, and James also meets clients in person in the cities where he is working.",
+    a: "Yes. Everything can be done online, from anywhere in the world, and we also meet clients in person in the cities where we are working.",
   },
   {
     q: "What if English is not my first language?",
@@ -290,7 +290,7 @@ export const faqs = [
   },
   {
     q: "Do you install smart home devices?",
-    a: "No. You buy and place the devices yourself, or hire a local installer. James then configures everything remotely, in accounts you own, on a screen share with you present. We never hold your passwords.",
+    a: "No. You buy and place the devices yourself, or hire a local installer. We then configure everything remotely, in accounts you own, on a screen share with you present. We never hold your passwords.",
   },
 ];
 

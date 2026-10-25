@@ -197,7 +197,7 @@ export default function WebsiteCheck() {
 
           <div className="wc-actions">
             <Link href={bookHref} className="btn btn-primary">
-              Book a free walkthrough of this report
+              Book a free consultation
             </Link>
             <button
               type="button"

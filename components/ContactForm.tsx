@@ -101,7 +101,7 @@ export default function ContactForm() {
       const body = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) throw new Error(body.error || "Request failed");
       form.reset();
-      setStatus({ kind: "ok", message: "Request sent. James will reply to set up your free consultation." });
+      setStatus({ kind: "ok", message: "Request sent. We will reply to set up your free consultation." });
     } catch (err) {
       setStatus({
         kind: "err",

@@ -31,7 +31,8 @@ const groups = [
       "Business details for search engines",
       "Image descriptions",
       "Preview image when the link is shared",
-      "Page language and main address",
+      "Page language",
+      "Main address",
     ],
   },
   {
@@ -120,7 +121,7 @@ export default function WebsiteCheckPage() {
 
       <Closer
         title="Want the fixes done for you?"
-        body="Book a free 30-minute consultation with James Collins. He will walk you through your report and what to fix first, online from anywhere or in person where he is working."
+        body="Book a free 30-minute consultation with James Collins. We will walk you through your report and what to fix first, online from anywhere or in person where we are working."
         service="website-updates-seo"
       />
     </>

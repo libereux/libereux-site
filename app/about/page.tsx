@@ -6,7 +6,7 @@ import { site } from "@/lib/content";
 export const metadata: Metadata = {
   title: "About James Collins and Libereux",
   description:
-    "Libereux is led by James Collins, who helps businesses understand what AI can really do for them, then builds it. Fully remote, working with clients worldwide.",
+    "Libereux is led by James Collins, who helps businesses understand what AI can really do for them, then builds it. Online worldwide, and in person where he is working.",
   alternates: { canonical: "/about" },
   openGraph: og("/about"),
 };
@@ -30,8 +30,8 @@ export default function AboutPage() {
             <h2>Meet James</h2>
             <p className="lede" style={{ maxWidth: "56ch" }}>
               I am {site.founder}, founder of Libereux. I help people and businesses understand what
-              AI can really do for them, and then I build it. You work with me directly, from the first
-              call to handover.
+              AI can really do for them, and then we build it. I lead every engagement myself, from the
+              first call to handover.
             </p>
             <p className="muted">
               My background is in enterprise project management and Agile delivery, keeping complex
@@ -40,8 +40,8 @@ export default function AboutPage() {
               its size: understand the business first, scope it honestly, and deliver what was agreed.
             </p>
             <p className="muted">
-              I work fully remotely with clients anywhere in the world, and meet people in person in
-              the cities where I am working.
+              I work online with clients anywhere in the world, and meet people in person in the
+              cities where I am working.
             </p>
           </div>
         </div>
