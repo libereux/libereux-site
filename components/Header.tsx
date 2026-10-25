@@ -42,7 +42,7 @@ export default function Header() {
             </Link>
           ))}
           <Link href="/contact" className="btn btn-primary">
-            Book a free 30-minute consultation
+            Free consultation
           </Link>
         </nav>
 
