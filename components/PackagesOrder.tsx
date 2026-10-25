@@ -159,7 +159,7 @@ export default function PackagesOrder() {
           <summary>
             3. Is your project bigger or more complex?{flags.length + (wantsQuote ? 1 : 0) > 0 ? `, ${flags.length + (wantsQuote ? 1 : 0)} selected` : ""}
           </summary>
-          <p className="hint">If any of these apply, we quote it in writing instead of using checkout.</p>
+          <p className="hint">If any of these apply, you get a written quote within 24 hours or the paid AI Opportunity Audit, instead of checkout.</p>
           <div className="chip-row">
             {routeToConsultation.map((f) => (
               <label className="chip" key={f} htmlFor={`flag-${f}`}>
@@ -255,7 +255,7 @@ export default function PackagesOrder() {
 
         <p className="consent">
           We use your details only to reply to you and deliver your order. See our <Link href="/privacy">privacy policy</Link>.
-          Prefer to talk first? <Link href="/contact">Book a free consultation</Link>.
+          Prefer to talk first? <Link href="/contact">Book a free 30-minute consultation</Link>.
         </p>
 
         <div aria-live="polite">

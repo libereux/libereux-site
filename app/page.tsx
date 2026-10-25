@@ -44,7 +44,7 @@ export default function Home() {
             </p>
             <div className="btn-row">
               <Link href="/contact" className="btn btn-primary">
-                Book a free consultation
+                Book a free 30-minute consultation
               </Link>
               <Link href="/packages" className="btn btn-ghost">
                 See packages and prices
@@ -54,8 +54,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="trust-line">
-              Free and 30 minutes, with {site.founder}. Online from anywhere, or in person where he is
-              working. {site.reach}
+              Free and 30 minutes, with {site.founder}, on an online video call. {site.reach}
             </p>
           </div>
           <HeroDemo />

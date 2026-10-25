@@ -210,7 +210,7 @@ export default function ContactForm() {
 
       <div>
         <button type="submit" className="btn btn-primary" disabled={status.kind === "sending"}>
-          {status.kind === "sending" ? "Sending" : slot !== null ? "Book my free consultation" : "Request my free consultation"}
+          {status.kind === "sending" ? "Sending" : "Book a free 30-minute consultation"}
         </button>
       </div>
 

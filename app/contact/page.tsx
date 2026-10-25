@@ -7,7 +7,7 @@ import { site } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Book a Free 30-Minute Consultation",
   description:
-    "Book a free 30-minute consultation with James Collins about AI, automation, websites, apps or smart home. Online worldwide, or in person.",
+    "Book a free 30-minute consultation with James Collins about AI, automation, websites, apps or smart home. Held as an online video call, worldwide.",
   alternates: { canonical: "/contact" },
   openGraph: og("/contact"),
 };
@@ -21,7 +21,7 @@ export default function ContactPage() {
           { href: "/contact", label: "Contact" },
         ]}
         title="Book a free consultation."
-        lede="Thirty minutes with James Collins, online from anywhere or in person where he is working. Tell us a little about your business and we will find a time."
+        lede="Thirty minutes with James Collins, on an online video call from wherever you are. Tell us a little about your business and we will find a time."
       />
       <section className="section">
         <div className="wrap split">
@@ -44,8 +44,8 @@ export default function ContactPage() {
               <li className="muted">{site.reach}</li>
             </ul>
             <p className="muted">
-              Calls are in English. If that is hard for you, we can work by email and translate
-              proposals and recaps.
+              Proposals and call recaps can be translated in both directions. Calls are in English,
+              and if that is hard for you, we can work by email.
             </p>
           </div>
         </div>

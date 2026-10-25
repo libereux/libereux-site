@@ -38,7 +38,7 @@ export default function HowItWorksPage() {
               <li>You work directly with {site.founder}, from the first call to handover.</li>
               <li>A written scope with the price before any work starts.</li>
               <li>Plain language, with no jargon and no hard sell.</li>
-              <li>Online from anywhere, or in person where James is working.</li>
+              <li>Online video calls, from anywhere.</li>
               <li>Translated proposals and call recaps when English is hard for you or your team.</li>
             </ul>
           </div>
