@@ -41,6 +41,19 @@ export default function RealEstatePage() {
           </div>
         </div>
       </section>
+      <section className="section section-tight">
+        <div className="wrap">
+          <div className="esign-card esign-portal">
+            <div>
+              <h2>Owner and property manager portal</h2>
+              <p className="muted">Leases, signatures and the property calendar. For Libereux staff only.</p>
+            </div>
+            <a className="btn btn-primary" href="/admin/leases" rel="nofollow">
+              Sign in
+            </a>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

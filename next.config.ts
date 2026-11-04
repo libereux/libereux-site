@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
       { source: "/TenantLogin", destination: "/real-estate", permanent: false },
       { source: "/TenantRegister", destination: "/real-estate", permanent: false },
       { source: "/TenantPortal", destination: "/real-estate", permanent: false },
-      { source: "/AdminPortal", destination: "/", permanent: false },
+      { source: "/AdminPortal", destination: "/admin/leases", permanent: false },
     ];
   },
 

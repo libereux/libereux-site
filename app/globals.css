@@ -2561,3 +2561,6 @@ legend {
 .esign-lease { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
 .esign-lease p { margin: 0; }
 .esign-lease form { flex-basis: 100%; }
+.esign-portal { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.esign-portal h2 { font-size: var(--step-1); }
+.esign-portal p { margin: 4px 0 0; }
