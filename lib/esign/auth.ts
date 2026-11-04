@@ -8,7 +8,7 @@ export const SESSION_COOKIE = "lx_admin";
 const SESSION_DAYS = 30;
 
 export function adminEmails(): string[] {
-  const raw = process.env.ADMIN_EMAILS || "holdings@libereux.com,jetblack56@gmail.com";
+  const raw = process.env.ADMIN_EMAILS || "holdings@libereux.com,jetblack56@gmail.com,sharocollins@gmail.com";
   return raw
     .split(",")
     .map((e) => e.trim().toLowerCase())

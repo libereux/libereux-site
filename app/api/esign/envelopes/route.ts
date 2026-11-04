@@ -1,7 +1,8 @@
 // Lease dashboard data. GET lists every envelope. POST uploads a lease PDF, sets the signing order,
-// and emails the first signer.
-import { adminFrom, baseUrl, clientIp, sameOrigin } from "@/lib/esign/auth";
-import { createEnvelope, inviteCurrent, listEnvelopes } from "@/lib/esign/envelopes";
+// and saves it as a draft so fields can be placed before it is sent.
+import { adminFrom, clientIp, sameOrigin } from "@/lib/esign/auth";
+import { createEnvelope, listEnvelopes } from "@/lib/esign/envelopes";
+import { driveAvailable, driveConfig } from "@/lib/esign/drive";
 import { pageCount } from "@/lib/esign/pdf";
 import { PROPERTIES, type Envelope } from "@/lib/esign/types";
 
@@ -25,8 +26,13 @@ const validEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 export async function GET(req: Request) {
   const admin = await adminFrom(req);
   if (!admin) return Response.json({ error: "Sign in first." }, { status: 401 });
-  const all = await listEnvelopes();
-  return Response.json({ admin, properties: PROPERTIES, envelopes: all.map(publicView) });
+  const [all, drive] = await Promise.all([listEnvelopes(), driveConfig()]);
+  return Response.json({
+    admin,
+    properties: PROPERTIES,
+    drive: { available: driveAvailable(), connected: !!drive, connectedAt: drive?.connectedAt },
+    envelopes: all.map(publicView),
+  });
 }
 
 export async function POST(req: Request) {
@@ -82,6 +88,5 @@ export async function POST(req: Request) {
     signers,
     ip: clientIp(req),
   });
-  const sent = await inviteCurrent(env, baseUrl(req), admin);
-  return Response.json({ ok: true, id: env.id, emailed: sent.ok, error: sent.error });
+  return Response.json({ ok: true, id: env.id });
 }

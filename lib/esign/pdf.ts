@@ -1,7 +1,7 @@
 // Builds the completed lease: the original pages with an envelope stamp, a signature page,
 // and a certificate of completion (document fingerprint plus the full audit trail).
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
-import type { Envelope } from "./types";
+import type { Envelope, Field } from "./types";
 
 const NAVY = rgb(0x1b / 255, 0x2a / 255, 0x4a / 255);
 const ORANGE = rgb(1, 0x6b / 255, 0x35 / 255);
@@ -49,10 +49,33 @@ export async function pageCount(bytes: Uint8Array) {
   return doc.getPageCount();
 }
 
+export function dateOnly(iso?: string) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "2-digit", day: "2-digit", year: "numeric" }).format(new Date(iso));
+}
+
+// The value a signer's field shows, for text-like fields.
+export function fieldText(env: Envelope, f: Field): string {
+  const s = env.signers[f.signer];
+  if (!s) return "";
+  if (f.type === "date") return dateOnly(s.signedAt);
+  if (f.type === "name") return s.typedName || "";
+  return s.values?.[f.id] || "";
+}
+
+export const initialsOf = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p[0]!.toUpperCase())
+    .join("")
+    .slice(0, 4);
+
 export async function buildSignedPdf(
   env: Envelope,
   original: Uint8Array,
   signatures: (Uint8Array | null)[],
+  initials: (Uint8Array | null)[] = [],
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.load(original, { ignoreEncryption: true });
   const helv = await doc.embedFont(StandardFonts.Helvetica);
@@ -64,6 +87,50 @@ export async function buildSignedPdf(
     doc.getForm().flatten();
   } catch {
     // No form, or a form pdf-lib cannot flatten: the fingerprint still records the original.
+  }
+
+  // Stamp every placed field onto its page.
+  const pages = doc.getPages();
+  const imgCache = new Map<string, Awaited<ReturnType<typeof doc.embedPng>>>();
+  const img = async (key: string, bytes: Uint8Array | null | undefined) => {
+    if (!bytes) return null;
+    if (!imgCache.has(key)) imgCache.set(key, await doc.embedPng(bytes));
+    return imgCache.get(key)!;
+  };
+  for (const f of env.fields || []) {
+    const page = pages[f.page];
+    const s = env.signers[f.signer];
+    if (!page || !s || s.status !== "signed") continue;
+    const box = page.getCropBox();
+    const x = box.x + f.x * box.width;
+    const w = f.w * box.width;
+    const h = f.h * box.height;
+    const y = box.y + box.height * (1 - f.y) - h;
+    if (f.type === "signature" || f.type === "initials") {
+      const png = f.type === "signature" ? await img(`s${f.signer}`, signatures[f.signer]) : await img(`i${f.signer}`, initials[f.signer]);
+      if (png) {
+        const scale = Math.min(w / png.width, h / png.height);
+        page.drawImage(png, { x, y: y + (h - png.height * scale) / 2, width: png.width * scale, height: png.height * scale });
+      } else {
+        const text = safe(f.type === "signature" ? s.typedName || s.name : initialsOf(s.typedName || s.name));
+        let size = Math.min(h * 0.8, 28);
+        while (size > 6 && script.widthOfTextAtSize(text, size) > w) size -= 0.5;
+        page.drawText(text, { x, y: y + h * 0.2, size, font: script, color: NAVY });
+      }
+      continue;
+    }
+    if (f.type === "checkbox") {
+      if (s.values?.[f.id] === "true") {
+        const size = Math.min(w, h) * 0.95;
+        page.drawText("X", { x: x + (w - bold.widthOfTextAtSize("X", size)) / 2, y: y + h * 0.15, size, font: bold, color: INK });
+      }
+      continue;
+    }
+    const text = safe(fieldText(env, f));
+    if (!text) continue;
+    let size = Math.min(h * 0.72, 12);
+    while (size > 5 && helv.widthOfTextAtSize(text, size) > w) size -= 0.25;
+    page.drawText(text, { x: x + 1, y: y + (h - size) / 2 + size * 0.2, size, font: helv, color: INK });
   }
 
   const total = doc.getPageCount();

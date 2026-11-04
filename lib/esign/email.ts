@@ -1,4 +1,6 @@
 // Lease signing emails through Resend, the same free service the contact form uses.
+import { platformFetch } from "./store";
+
 export const escape = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -32,7 +34,7 @@ export async function sendEmail(opts: {
     }
     return { ok: false, error: "Email is not configured." };
   }
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await platformFetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({

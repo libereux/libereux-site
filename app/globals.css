@@ -2486,3 +2486,43 @@ legend {
 .esign-check { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; }
 .esign-check input { width: 22px; height: 22px; margin-top: 3px; }
 .esign-fine { font-size: var(--step--1); }
+
+/* Lease pages with boxes (field editor and signer view) */
+.esign-pages { display: grid; gap: 18px; }
+.esign-page-wrap { display: grid; gap: 4px; }
+.esign-page { position: relative; width: 100%; background: var(--white); box-shadow: 0 1px 6px rgba(17, 24, 39, 0.18); user-select: none; }
+.esign-page canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.esign-layer { position: absolute; inset: 0; }
+.esign-page-num { text-align: center; font-size: var(--step--1); margin: 0; }
+.esign-placing .esign-layer { cursor: crosshair; }
+.esign-editor { display: grid; gap: 16px; }
+.esign-toolbar { position: sticky; top: 80px; z-index: 5; background: var(--paper); border: 1px solid var(--trace); border-radius: var(--radius-m); padding: 12px; display: grid; gap: 10px; }
+.esign-toolbar-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.esign-step { font-weight: 700; font-size: var(--step--1); margin-right: 4px; }
+.esign-chip, .esign-tool { font: inherit; font-size: var(--step--1); padding: 6px 10px; border-radius: 999px; border: 2px solid var(--trace); background: var(--white); cursor: pointer; color: var(--ink); }
+.esign-chip { border-color: var(--c); }
+.esign-chip.is-on { background: var(--c); color: var(--white); }
+.esign-tool.is-on { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.esign-danger { color: #b91c1c; border-color: #fca5a5; }
+.esign-count { display: inline-block; min-width: 1.4em; padding: 0 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.85); color: var(--ink); text-align: center; }
+.esign-hint { margin: 0; font-weight: 700; color: var(--orange-deep); }
+.esign-props input:not([type="checkbox"]), .esign-props select { font: inherit; font-size: var(--step--1); padding: 4px 8px; border: 1px solid #9aa3b2; border-radius: var(--radius-s); width: auto; }
+.esign-inline { display: inline-flex; gap: 6px; align-items: center; font-size: var(--step--1); }
+.esign-box { position: absolute; border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); border-radius: 3px; cursor: move; touch-action: none; overflow: hidden; }
+.esign-box.is-selected { outline: 3px solid var(--navy); outline-offset: 1px; }
+.esign-box-label { position: absolute; left: 3px; top: 0; font-size: 10px; line-height: 1.3; font-weight: 700; color: var(--ink); white-space: nowrap; pointer-events: none; }
+.esign-handle { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; background: var(--c); cursor: nwse-resize; }
+.esign-sendbar { position: sticky; bottom: 0; background: var(--paper); border: 1px solid var(--trace); border-radius: var(--radius-m); padding: 12px; display: grid; gap: 8px; }
+.esign-progress { position: sticky; top: 80px; z-index: 5; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; background: var(--navy); color: var(--on-ink); padding: 10px 14px; border-radius: var(--radius-m); }
+.esign-sbox { position: absolute; border: 2px solid var(--orange); background: rgba(255, 107, 53, 0.14); border-radius: 3px; display: flex; align-items: center; overflow: hidden; }
+.esign-sbox.is-done { border-color: #16a34a; background: rgba(22, 163, 74, 0.08); }
+.esign-sbox.is-flash { animation: esign-flash 0.5s ease-in-out 3; }
+@keyframes esign-flash { 50% { box-shadow: 0 0 0 6px rgba(255, 107, 53, 0.55); } }
+.esign-sbox input:not([type="checkbox"]) { border: 0 !important; background: transparent !important; width: 100%; height: 100%; padding: 0 4px !important; font-size: clamp(9px, 1.4vw, 14px) !important; border-radius: 0 !important; }
+.esign-sbox input[type="checkbox"] { width: 100%; height: 100%; margin: 0; }
+.esign-sig-btn, .esign-sig-applied { font: inherit; width: 100%; height: 100%; border: 0; background: transparent; cursor: pointer; padding: 0 4px; display: flex; align-items: center; justify-content: center; }
+.esign-sig-btn { font-weight: 700; font-size: clamp(10px, 1.5vw, 15px); color: var(--orange-deep); }
+.esign-sig-applied img { max-width: 100%; max-height: 100%; }
+.esign-script { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: clamp(12px, 2.4vw, 26px); color: var(--navy); white-space: nowrap; }
+.esign-auto { font-size: clamp(9px, 1.4vw, 14px); padding: 0 4px; white-space: nowrap; }
+.esign-filled { position: absolute; display: flex; align-items: center; font-size: clamp(8px, 1.2vw, 12px); color: var(--steel); background: rgba(221, 225, 231, 0.55); padding: 0 3px; overflow: hidden; white-space: nowrap; border-radius: 2px; }
