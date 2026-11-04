@@ -2526,3 +2526,41 @@ legend {
 .esign-script { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: clamp(12px, 2.4vw, 26px); color: var(--navy); white-space: nowrap; }
 .esign-auto { font-size: clamp(9px, 1.4vw, 14px); padding: 0 4px; white-space: nowrap; }
 .esign-filled { position: absolute; display: flex; align-items: center; font-size: clamp(8px, 1.2vw, 12px); color: var(--steel); background: rgba(221, 225, 231, 0.55); padding: 0 3px; overflow: hidden; white-space: nowrap; border-radius: 2px; }
+
+/* Property calendar */
+.esign-tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--trace); }
+.esign-tab { font: inherit; font-weight: 700; padding: 10px 18px; border: 0; background: transparent; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; color: var(--steel); }
+.esign-tab.is-on { color: var(--ink); border-bottom-color: var(--orange); }
+.esign-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 12px; }
+.esign-wide { grid-column: 1 / -1; }
+.esign-card > summary { cursor: pointer; }
+.esign-warn { border-color: #fca5a5; background: #fef2f2; }
+.esign-cal-bar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+.esign-timeline { display: grid; gap: 6px; overflow-x: auto; }
+.esign-tl-head, .esign-tl-row { display: grid; grid-template-columns: 130px 1fr; gap: 8px; min-width: 560px; }
+.esign-tl-axis { position: relative; height: 22px; font-size: 12px; color: var(--steel); }
+.esign-tl-axis span { position: absolute; transform: translateX(2px); white-space: nowrap; }
+.esign-tl-name { font-weight: 700; font-size: var(--step--1); padding-top: 10px; }
+.esign-tl-track { position: relative; background: var(--paper); border: 1px solid var(--trace); border-radius: var(--radius-s); }
+.esign-tl-grid { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--trace); }
+.esign-tl-today { position: absolute; top: 0; bottom: 0; border-left: 2px solid var(--orange); z-index: 2; }
+.esign-tl-empty { position: absolute; left: 10px; top: 9px; font-size: var(--step--1); color: var(--steel); }
+.esign-cal-event { position: absolute; height: 28px; border: 0; border-radius: 5px; background: var(--c); color: #fff; font: inherit; font-size: 12px; font-weight: 700; text-align: left; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; z-index: 1; }
+.esign-k-lease-pending { background: repeating-linear-gradient(135deg, var(--c), var(--c) 8px, #ea580c 8px, #ea580c 16px); }
+.esign-k-blocked { background: repeating-linear-gradient(135deg, #d1d5db, #d1d5db 6px, #e5e7eb 6px, #e5e7eb 12px); color: var(--ink); }
+.esign-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: var(--step--1); align-items: center; }
+.esign-legend i, .esign-cal-list i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; }
+.esign-cal-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.esign-cal-list li { display: grid; grid-template-columns: 16px 1fr; gap: 8px; align-items: start; }
+.esign-cal-list li i { margin-top: 6px; }
+.esign-detail { border: 1px solid var(--trace); border-radius: var(--radius-s); padding: 12px; background: var(--white); display: grid; gap: 4px; }
+.esign-detail p { margin: 0; }
+.esign-feed { display: grid; grid-template-columns: 160px 140px 1fr auto; gap: 8px; align-items: center; }
+@media (max-width: 760px) { .esign-feed { grid-template-columns: 1fr 1fr; } .esign-feed input { grid-column: 1 / -1; } }
+.esign-code { font-family: ui-monospace, monospace; font-size: 13px; word-break: break-all; background: var(--paper); padding: 8px; border-radius: var(--radius-s); }
+.esign-lease { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.esign-lease p { margin: 0; }
+.esign-lease form { flex-basis: 100%; }
+.esign-portal { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.esign-portal h2 { font-size: var(--step-1); }
+.esign-portal p { margin: 4px 0 0; }

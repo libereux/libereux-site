@@ -3,6 +3,7 @@
 import { adminFrom, baseUrl, clientIp, sameOrigin } from "@/lib/esign/auth";
 import {
   cleanFields,
+  cleanLease,
   getEnvelope,
   getFile,
   inviteCurrent,
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
   if (!sameOrigin(req)) return Response.json({ error: "Not allowed." }, { status: 403 });
   const admin = await adminFrom(req);
   if (!admin) return Response.json({ error: "Sign in first." }, { status: 401 });
-  let body: { id?: string; action?: string; fields?: unknown };
+  let body: { id?: string; action?: string; fields?: unknown; lease?: Record<string, unknown> };
   try {
     body = await req.json();
   } catch {
@@ -61,7 +62,18 @@ export async function POST(req: Request) {
     return Response.json(r, { status: r.ok ? 200 : 502 });
   }
 
+  if (body.action === "lease") {
+    const raw = (body as { lease?: Record<string, unknown> }).lease || {};
+    const lease = cleanLease(raw, env.lease?.tenants || env.signers.filter((s) => /tenant/i.test(s.role)).map((s) => s.name).join(" and "));
+    if (typeof lease === "string") return Response.json({ error: lease }, { status: 400 });
+    env.lease = lease;
+    log(env, { type: "Lease dates updated", actor: admin, detail: lease ? `${lease.start} to ${lease.end}` : "Removed from calendar" });
+    await saveEnvelope(env);
+    return Response.json({ ok: true });
+  }
+
   if (body.action === "resend") {
+    if (env.source === "imported") return Response.json({ error: "This lease was signed elsewhere, so there is no email to resend." }, { status: 400 });
     if (env.status === "completed") {
       const signed = await getFile(env.id, "signed.pdf");
       if (!signed) return Response.json({ error: "Signed copy missing." }, { status: 500 });

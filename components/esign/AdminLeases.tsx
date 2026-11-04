@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import FieldEditor from "./FieldEditor";
+import PropertyCalendar from "./PropertyCalendar";
 
 type Signer = {
   name: string;
@@ -24,6 +25,8 @@ type Envelope = {
   completedAt?: string;
   driveLink?: string;
   fields?: unknown[];
+  source?: "signed_here" | "imported";
+  lease?: { tenants: string; start: string; end: string; rent?: number };
   current: number;
   pages: number;
   originalName: string;
@@ -56,6 +59,7 @@ export default function AdminLeases() {
   const [needLogin, setNeedLogin] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
+  const [tab, setTab] = useState<"calendar" | "leases">("calendar");
   const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
@@ -109,7 +113,19 @@ export default function AdminLeases() {
           {notice}
         </p>
       )}
-      {editing ? (
+      {!editing && (
+        <div className="esign-tabs" role="tablist">
+          <button role="tab" aria-selected={tab === "calendar"} className={`esign-tab ${tab === "calendar" ? "is-on" : ""}`} onClick={() => setTab("calendar")}>
+            Calendar
+          </button>
+          <button role="tab" aria-selected={tab === "leases"} className={`esign-tab ${tab === "leases" ? "is-on" : ""}`} onClick={() => setTab("leases")}>
+            Leases
+          </button>
+        </div>
+      )}
+      {!editing && tab === "calendar" ? (
+        <PropertyCalendar />
+      ) : editing ? (
         <FieldEditor
           id={editing}
           onClose={(sent) => {
@@ -123,15 +139,16 @@ export default function AdminLeases() {
         <>
           <DriveCard drive={data.drive} />
           <NewEnvelope properties={data.properties} onCreated={(id) => setEditing(id)} />
+          <ImportLease properties={data.properties} onDone={load} />
+          <h2>All leases</h2>
+          {data.envelopes.length === 0 && <p className="muted">Nothing sent yet.</p>}
+          <ul className="esign-list">
+            {data.envelopes.map((e) => (
+              <EnvelopeCard key={e.id} env={e} onChange={load} onEdit={() => setEditing(e.id)} />
+            ))}
+          </ul>
         </>
       )}
-      <h2>All leases</h2>
-      {data.envelopes.length === 0 && <p className="muted">Nothing sent yet.</p>}
-      <ul className="esign-list">
-        {data.envelopes.map((e) => (
-          <EnvelopeCard key={e.id} env={e} onChange={load} onEdit={() => setEditing(e.id)} />
-        ))}
-      </ul>
     </div>
   );
 }
@@ -205,6 +222,7 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
   const [notes, setNotes] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [signers, setSigners] = useState(blankSigners);
+  const [lease, setLease] = useState({ start: "", end: "", rent: "" });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [formKey, setFormKey] = useState(0);
@@ -236,6 +254,9 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
         fd.set("notes", notes);
         fd.set("file", file);
         fd.set("signers", JSON.stringify(list));
+        fd.set("start", lease.start);
+        fd.set("end", lease.end);
+        fd.set("rent", lease.rent);
         const r = await fetch("/api/esign/envelopes", { method: "POST", body: fd });
         const j = await r.json().catch(() => ({}));
         setBusy(false);
@@ -244,6 +265,7 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
         setNotes("");
         setFile(null);
         setSigners(blankSigners());
+        setLease({ start: "", end: "", rent: "" });
         setFormKey((k) => k + 1);
         onCreated(j.id);
       }}
@@ -285,6 +307,24 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
         <button type="button" className="btn btn-ghost" onClick={() => setSigners((x) => [...x, { name: "", email: "", role: "Tenant" }])}>
           Add a signer
         </button>
+      </fieldset>
+      <fieldset className="esign-signers">
+        <legend>For the calendar</legend>
+        <div className="esign-grid">
+          <label className="esign-field">
+            <span>Move-in</span>
+            <input type="date" value={lease.start} onChange={(e) => setLease({ ...lease, start: e.target.value })} />
+          </label>
+          <label className="esign-field">
+            <span>Last night (lease end)</span>
+            <input type="date" value={lease.end} onChange={(e) => setLease({ ...lease, end: e.target.value })} />
+          </label>
+          <label className="esign-field">
+            <span>Monthly rent</span>
+            <input inputMode="decimal" placeholder="4300" value={lease.rent} onChange={(e) => setLease({ ...lease, rent: e.target.value })} />
+          </label>
+        </div>
+        <p className="muted">Shows on the calendar as soon as it is sent, and turns solid once everyone signs.</p>
       </fieldset>
       <label className="esign-field">
         <span>Private notes (only you and Sharo see these)</span>
@@ -348,6 +388,7 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
           </li>
         ))}
       </ol>
+      <LeaseDates env={env} onChange={onChange} />
       {env.notes && <p className="muted">Notes: {env.notes}</p>}
       <div className="btn-row">
         <a className="btn btn-ghost" href={`/api/esign/file?id=${env.id}&kind=original`} target="_blank" rel="noreferrer">
@@ -373,7 +414,7 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
               {busy === "drive" ? "Saving…" : "Save to Google Drive"}
             </button>
           ))}
-        {(env.status === "in_progress" || env.status === "completed") && (
+        {(env.status === "in_progress" || (env.status === "completed" && env.source !== "imported")) && (
           <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("resend")}>
             {busy === "resend" ? "Sending…" : env.status === "completed" ? "Re-email signed copy to all" : "Resend email"}
           </button>
@@ -398,5 +439,152 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
         </ul>
       </details>
     </li>
+  );
+}
+
+const day = (s: string) => new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(new Date(`${s}T00:00:00Z`));
+
+function LeaseDates({ env, onChange }: { env: Envelope; onChange: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState({ tenants: env.lease?.tenants || "", start: env.lease?.start || "", end: env.lease?.end || "", rent: env.lease?.rent ? String(env.lease.rent) : "" });
+  const [err, setErr] = useState("");
+  if (env.status === "voided") return null;
+  return (
+    <div className="esign-lease">
+      {env.lease ? (
+        <p>
+          <strong>Lease:</strong> {env.lease.tenants} · {day(env.lease.start)} to {day(env.lease.end)}
+          {env.lease.rent ? ` · $${env.lease.rent.toLocaleString("en-US")}/month` : ""}
+          {env.source === "imported" ? " · signed outside this site" : ""}
+        </p>
+      ) : (
+        <p className="muted">Not on the calendar yet: add the lease dates.</p>
+      )}
+      <button type="button" className="esign-tool" onClick={() => setOpen(!open)}>
+        {open ? "Cancel" : env.lease ? "Edit dates" : "Add dates"}
+      </button>
+      {open && (
+        <form
+          className="esign-grid"
+          onSubmit={async (ev) => {
+            ev.preventDefault();
+            const r = await fetch("/api/esign/envelope", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: env.id, action: "lease", lease: f }),
+            });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok) return setErr(j.error || "Could not save.");
+            setOpen(false);
+            setErr("");
+            onChange();
+          }}
+        >
+          <label className="esign-field">
+            <span>Tenants</span>
+            <input value={f.tenants} onChange={(e) => setF({ ...f, tenants: e.target.value })} />
+          </label>
+          <label className="esign-field">
+            <span>Move-in</span>
+            <input type="date" required value={f.start} onChange={(e) => setF({ ...f, start: e.target.value })} />
+          </label>
+          <label className="esign-field">
+            <span>Last night</span>
+            <input type="date" required value={f.end} onChange={(e) => setF({ ...f, end: e.target.value })} />
+          </label>
+          <label className="esign-field">
+            <span>Monthly rent</span>
+            <input inputMode="decimal" value={f.rent} onChange={(e) => setF({ ...f, rent: e.target.value })} />
+          </label>
+          <div className="esign-wide">
+            <button className="btn btn-primary">Save dates</button>
+            {err && <p className="esign-err">{err}</p>}
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function ImportLease({ properties, onDone }: { properties: string[]; onDone: () => void }) {
+  const blank = { property: properties[0], tenants: "", start: "", end: "", rent: "", signedOn: "", title: "", notes: "" };
+  const [f, setF] = useState(blank);
+  const [file, setFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [key, setKey] = useState(0);
+  const set = (k: keyof typeof blank) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
+  return (
+    <details className="esign-card" key={key}>
+      <summary>
+        <strong>Add a lease that was already signed</strong> <span className="muted">(paper or another e-sign service)</span>
+      </summary>
+      <form
+        className="esign-grid"
+        onSubmit={async (ev) => {
+          ev.preventDefault();
+          if (!file) return setMsg({ ok: false, text: "Attach the signed PDF." });
+          setBusy(true);
+          const fd = new FormData();
+          Object.entries(f).forEach(([k, v]) => fd.set(k, v));
+          fd.set("file", file);
+          const r = await fetch("/api/esign/import", { method: "POST", body: fd });
+          const j = await r.json().catch(() => ({}));
+          setBusy(false);
+          if (!r.ok) return setMsg({ ok: false, text: j.error || "Could not save." });
+          setF(blank);
+          setFile(null);
+          setKey((k) => k + 1);
+          onDone();
+        }}
+      >
+        <label className="esign-field">
+          <span>Property</span>
+          <select value={f.property} onChange={set("property")}>
+            {properties.map((p) => (
+              <option key={p}>{p}</option>
+            ))}
+          </select>
+        </label>
+        <label className="esign-field">
+          <span>Tenants</span>
+          <input required placeholder="Patrick Rivers, Yosha Rivers" value={f.tenants} onChange={set("tenants")} />
+        </label>
+        <label className="esign-field">
+          <span>Lease start</span>
+          <input type="date" required value={f.start} onChange={set("start")} />
+        </label>
+        <label className="esign-field">
+          <span>Lease end (last night)</span>
+          <input type="date" required value={f.end} onChange={set("end")} />
+        </label>
+        <label className="esign-field">
+          <span>Monthly rent</span>
+          <input inputMode="decimal" value={f.rent} onChange={set("rent")} />
+        </label>
+        <label className="esign-field">
+          <span>Date signed</span>
+          <input type="date" value={f.signedOn} onChange={set("signedOn")} />
+        </label>
+        <label className="esign-field">
+          <span>Title (optional)</span>
+          <input placeholder="Harrison Dr Lease 2026 to 2028" value={f.title} onChange={set("title")} />
+        </label>
+        <label className="esign-field">
+          <span>Signed PDF</span>
+          <input type="file" accept="application/pdf" required onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        </label>
+        <label className="esign-field esign-wide">
+          <span>Private notes (optional)</span>
+          <input value={f.notes} onChange={set("notes")} />
+        </label>
+        <div className="esign-wide">
+          <button className="btn btn-primary" disabled={busy}>
+            {busy ? "Saving…" : "Add to records and calendar"}
+          </button>
+          {msg && <p className={msg.ok ? "esign-ok" : "esign-err"}>{msg.text}</p>}
+        </div>
+      </form>
+    </details>
   );
 }
