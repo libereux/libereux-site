@@ -27,6 +27,7 @@ npm run lint
 - `next.config.ts`: redirects from the old site's URLs and security headers.
 - `docs/DEPLOY.md`: GitHub, Netlify (free plan) and Squarespace DNS steps.
 - `docs/PORTAL_PLAN.md`: phase 2, tenant and admin portals.
+- `/admin/leases`, `/sign`, `app/api/esign/`, `lib/esign/`, `components/esign/`: private lease signing for James and Sharo. See `docs/LEASE_SIGNING.md`.
 - `app/terms/`, `app/refund-policy/`: published terms and refund policy (approved by James 2026-10-24, awaiting legal review). `docs/TERMS_AND_REFUNDS_DRAFT.md` is the original draft.
 - `lib/pricing.ts`, `docs/PRICING_V1_DRAFT.md`, `app/packages/`, `components/PackagesOrder.tsx`, `app/api/order/`, `app/api/stripe-webhook/`, `lib/order/`: approved Pricing v1 with a package page and Stripe deposit checkout. Public since 2026-10-24: `pricingLive = true`, `pricingPublic = true`. Set `pricingPublic = false` to return to soft launch (direct link only, noindex, no sitemap or menu entry).
 
