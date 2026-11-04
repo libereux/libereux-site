@@ -19,7 +19,13 @@ const STORE = "esign";
 function netlifyKv(): Kv | null {
   let store;
   try {
-    store = getStore({ name: STORE, consistency: "strong" });
+    // Use the platform fetch, not the one Next.js wraps for caching: the wrapped one stalls
+    // Netlify Blobs reads inside GET route handlers.
+    const g = globalThis as unknown as { _nextOriginalFetch?: typeof fetch };
+    const base = g._nextOriginalFetch || fetch;
+    const raw: typeof fetch = (input, init) =>
+      base(input, { ...init, cache: "no-store", signal: init?.signal ?? AbortSignal.timeout(15_000) });
+    store = getStore({ name: STORE, consistency: "strong", fetch: raw });
   } catch {
     return null;
   }
