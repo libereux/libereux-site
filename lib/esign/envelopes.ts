@@ -3,7 +3,8 @@ import { kv } from "./store";
 import { newId, newToken, sha256 } from "./auth";
 import { buildSignedPdf, eastern } from "./pdf";
 import { button, escape, layout, sendEmail } from "./email";
-import type { Envelope, EnvelopeEvent, Signer } from "./types";
+import { driveConfig, uploadToDrive } from "./drive";
+import { FIELD_TYPES, type Envelope, type EnvelopeEvent, type Field, type Signer } from "./types";
 
 const envKey = (id: string) => `envelopes/${id}.json`;
 const fileKey = (id: string, name: string) => `files/${id}/${name}`;
@@ -49,17 +50,60 @@ export async function createEnvelope(input: {
     notes: input.notes,
     createdAt: now(),
     createdBy: input.createdBy,
-    status: "in_progress",
+    status: "draft",
     originalSha256: sha256(input.pdf),
     originalName: input.originalName,
     pages: input.pages,
     current: 0,
     signers: input.signers.map((s) => ({ ...s, status: "waiting", tokenHash: "" }) as Signer),
+    fields: [],
     events: [],
   };
   log(env, { type: "Created", actor: input.createdBy, ip: input.ip, detail: `${input.originalName}, SHA-256 ${env.originalSha256}` });
   await saveEnvelope(env);
   return env;
+}
+
+const clamp = (n: unknown, lo: number, hi: number) => Math.min(hi, Math.max(lo, Number(n) || 0));
+
+export function cleanFields(env: Envelope, raw: unknown): Field[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 300).flatMap((r) => {
+    const f = r as Record<string, unknown>;
+    const type = String(f.type) as Field["type"];
+    const signer = Math.floor(Number(f.signer));
+    const page = Math.floor(Number(f.page));
+    if (!FIELD_TYPES.includes(type) || !(signer >= 0 && signer < env.signers.length) || !(page >= 0 && page < env.pages)) return [];
+    const w = clamp(f.w, 0.01, 1);
+    const h = clamp(f.h, 0.008, 1);
+    return [
+      {
+        id: String(f.id || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 24) || newId(),
+        signer,
+        type,
+        page,
+        x: clamp(f.x, 0, 1 - w),
+        y: clamp(f.y, 0, 1 - h),
+        w,
+        h,
+        required: type === "checkbox" ? !!f.required : f.required !== false,
+        label: typeof f.label === "string" ? f.label.slice(0, 60) : undefined,
+      },
+    ];
+  });
+}
+
+// Every signer needs somewhere to sign before the lease can go out.
+export function missingSignatureFields(env: Envelope) {
+  return env.signers.filter((_, i) => !(env.fields || []).some((f) => f.signer === i && f.type === "signature"));
+}
+
+export async function sendEnvelope(env: Envelope, origin: string, actor: string) {
+  env.status = "in_progress";
+  env.current = 0;
+  log(env, { type: "Fields placed", actor, detail: `${(env.fields || []).length} fields` });
+  await saveEnvelope(env);
+  return inviteCurrent(env, origin, actor);
 }
 
 // Issues a fresh link for the signer whose turn it is and emails it. Older links for that signer stop working.
@@ -109,6 +153,8 @@ export async function recordSignature(opts: {
   idx: number;
   typedName: string;
   png: Uint8Array | null;
+  initials: Uint8Array | null;
+  values: Record<string, string>;
   ip: string;
   userAgent: string;
   origin: string;
@@ -121,7 +167,9 @@ export async function recordSignature(opts: {
   s.userAgent = opts.userAgent;
   s.typedName = opts.typedName;
   s.signatureMethod = opts.png ? "drawn" : "typed";
+  s.values = opts.values;
   if (opts.png) await kv().setBytes(fileKey(env.id, `sig-${idx}.png`), opts.png);
+  if (opts.initials) await kv().setBytes(fileKey(env.id, `ini-${idx}.png`), opts.initials);
   log(env, {
     type: "Signed",
     actor: `${s.role} ${opts.typedName} <${s.email}>`,
@@ -145,11 +193,35 @@ async function finish(env: Envelope) {
   const original = await getFile(env.id, "original.pdf");
   if (!original) throw new Error("Original document missing.");
   const sigs = await Promise.all(env.signers.map((_, i) => getFile(env.id, `sig-${i}.png`)));
-  const signed = await buildSignedPdf(env, original, sigs);
+  const inits = await Promise.all(env.signers.map((_, i) => getFile(env.id, `ini-${i}.png`)));
+  const signed = await buildSignedPdf(env, original, sigs, inits);
   env.signedSha256 = sha256(signed);
   await kv().setBytes(fileKey(env.id, "signed.pdf"), signed);
   await saveEnvelope(env);
+  await saveToDrive(env, signed);
   await sendCompleted(env, signed);
+}
+
+export async function saveToDrive(env: Envelope, signed: Uint8Array) {
+  if (!(await driveConfig())) {
+    log(env, { type: "Not saved to Drive", actor: "System", detail: "Google Drive is not connected" });
+    await saveEnvelope(env);
+    return { ok: false, error: "Google Drive is not connected yet." };
+  }
+  try {
+    const file = await uploadToDrive(env, signed);
+    env.driveFileId = file.id;
+    env.driveLink = file.webViewLink;
+    log(env, { type: "Saved to Google Drive", actor: "System", detail: "Libereux Signed Leases folder" });
+    await saveEnvelope(env);
+    return { ok: true };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Drive upload failed";
+    console.error("drive", msg);
+    log(env, { type: "Drive save failed", actor: "System", detail: msg });
+    await saveEnvelope(env);
+    return { ok: false, error: msg };
+  }
 }
 
 export async function sendCompleted(env: Envelope, signed: Uint8Array) {

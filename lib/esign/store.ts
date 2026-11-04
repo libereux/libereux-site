@@ -16,16 +16,18 @@ type Kv = {
 
 const STORE = "esign";
 
+// The platform fetch, not the one Next.js wraps for caching: the wrapped one stalls
+// outgoing requests inside GET route handlers. Every outgoing call in the lease tool uses this.
+export const platformFetch: typeof fetch = (input, init) => {
+  const g = globalThis as unknown as { _nextOriginalFetch?: typeof fetch };
+  const base = g._nextOriginalFetch || fetch;
+  return base(input, { ...init, cache: "no-store", signal: init?.signal ?? AbortSignal.timeout(20_000) });
+};
+
 function netlifyKv(): Kv | null {
   let store;
   try {
-    // Use the platform fetch, not the one Next.js wraps for caching: the wrapped one stalls
-    // Netlify Blobs reads inside GET route handlers.
-    const g = globalThis as unknown as { _nextOriginalFetch?: typeof fetch };
-    const base = g._nextOriginalFetch || fetch;
-    const raw: typeof fetch = (input, init) =>
-      base(input, { ...init, cache: "no-store", signal: init?.signal ?? AbortSignal.timeout(15_000) });
-    store = getStore({ name: STORE, consistency: "strong", fetch: raw });
+    store = getStore({ name: STORE, consistency: "strong", fetch: platformFetch });
   } catch {
     return null;
   }
@@ -67,7 +69,9 @@ const localKv: Kv = {
   },
   async setBytes(key, value) {
     await fs.mkdir(path.dirname(fileFor(key)), { recursive: true });
-    await fs.writeFile(fileFor(key), value);
+    const tmp = `${fileFor(key)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
+    await fs.writeFile(tmp, value);
+    await fs.rename(tmp, fileFor(key));
   },
   async getJSON<T>(key: string) {
     const b = await localKv.getBytes(key);

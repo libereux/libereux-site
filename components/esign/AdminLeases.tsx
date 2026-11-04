@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import FieldEditor from "./FieldEditor";
 
 type Signer = {
   name: string;
@@ -19,15 +20,17 @@ type Envelope = {
   notes?: string;
   createdAt: string;
   createdBy: string;
-  status: "in_progress" | "completed" | "voided";
+  status: "draft" | "in_progress" | "completed" | "voided";
   completedAt?: string;
+  driveLink?: string;
+  fields?: unknown[];
   current: number;
   pages: number;
   originalName: string;
   signers: Signer[];
   events: { at: string; type: string; actor: string; ip?: string; detail?: string }[];
 };
-type Data = { admin: string; properties: string[]; envelopes: Envelope[] };
+type Data = { admin: string; properties: string[]; drive: { available: boolean; connected: boolean; connectedAt?: string }; envelopes: Envelope[] };
 
 const when = (iso?: string) =>
   iso
@@ -52,6 +55,8 @@ export default function AdminLeases() {
   const [data, setData] = useState<Data | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
+  const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -66,8 +71,17 @@ export default function AdminLeases() {
   }, []);
 
   useEffect(() => {
-    // Initial fetch of dashboard data from our own API.
+    // Initial fetch of dashboard data from our own API, plus any message from the Drive connection.
+    const d = new URLSearchParams(window.location.search).get("drive");
+    const notes: Record<string, string> = {
+      connected: "Google Drive is connected. Signed leases will be saved there automatically.",
+      failed: "Google Drive did not connect. Check the setup steps and try again.",
+      declined: "Google Drive was not connected because access was not allowed.",
+      expired: "That Drive connection attempt expired. Try again.",
+      unavailable: "Google sign-in is not set up on this site yet.",
+    };
     // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (d && notes[d]) setNotice(notes[d]);
     load();
   }, [load]);
 
@@ -90,12 +104,32 @@ export default function AdminLeases() {
           Sign out
         </button>
       </div>
-      <NewEnvelope properties={data.properties} onSent={load} />
+      {notice && (
+        <p role="status" className="esign-card">
+          {notice}
+        </p>
+      )}
+      {editing ? (
+        <FieldEditor
+          id={editing}
+          onClose={(sent) => {
+            setEditing(null);
+            setNotice(sent ? "Sent. The first signer has the email now." : "Saved as a draft. Open it from the list to finish.");
+            load();
+            window.scrollTo({ top: 0 });
+          }}
+        />
+      ) : (
+        <>
+          <DriveCard drive={data.drive} />
+          <NewEnvelope properties={data.properties} onCreated={(id) => setEditing(id)} />
+        </>
+      )}
       <h2>All leases</h2>
       {data.envelopes.length === 0 && <p className="muted">Nothing sent yet.</p>}
       <ul className="esign-list">
         {data.envelopes.map((e) => (
-          <EnvelopeCard key={e.id} env={e} onChange={load} />
+          <EnvelopeCard key={e.id} env={e} onChange={load} onEdit={() => setEditing(e.id)} />
         ))}
       </ul>
     </div>
@@ -146,7 +180,26 @@ function Login() {
   );
 }
 
-function NewEnvelope({ properties, onSent }: { properties: string[]; onSent: () => void }) {
+function DriveCard({ drive }: { drive: Data["drive"] }) {
+  if (drive.connected) return <p className="muted">Google Drive connected: signed leases save to the folder &ldquo;Libereux Signed Leases&rdquo;.</p>;
+  return (
+    <div className="esign-card">
+      <h2>Save signed leases to Google Drive</h2>
+      <p>Connect once, signed in as holdings@libereux.com. The site can only see the files it creates there.</p>
+      {drive.available ? (
+        <p>
+          <a className="btn btn-primary" href="/api/esign/drive">
+            Connect Google Drive
+          </a>
+        </p>
+      ) : (
+        <p className="muted">Google sign-in is not set up on this site yet.</p>
+      )}
+    </div>
+  );
+}
+
+function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreated: (id: string) => void }) {
   const [title, setTitle] = useState("");
   const [property, setProperty] = useState(properties[0] || "");
   const [notes, setNotes] = useState("");
@@ -175,7 +228,6 @@ function NewEnvelope({ properties, onSent }: { properties: string[]; onSent: () 
         ev.preventDefault();
         if (!file) return setMsg({ ok: false, text: "Attach the lease PDF." });
         const list = signers.filter((s) => s.name.trim() || s.email.trim());
-        if (!confirm(`Send "${title}" for signature?\n\nOrder:\n${list.map((s, i) => `${i + 1}. ${s.role}: ${s.name} <${s.email}>`).join("\n")}\n\nThe first signer gets an email right away.`)) return;
         setBusy(true);
         setMsg(null);
         const fd = new FormData();
@@ -188,21 +240,16 @@ function NewEnvelope({ properties, onSent }: { properties: string[]; onSent: () 
         const j = await r.json().catch(() => ({}));
         setBusy(false);
         if (!r.ok) return setMsg({ ok: false, text: j.error || `Error ${r.status}` });
-        setMsg({
-          ok: !!j.emailed,
-          text: j.emailed
-            ? `Sent. ${list[0].name} has the signing email now.`
-            : `Saved, but the email did not go out (${j.error}). Use "Resend email" below.`,
-        });
         setTitle("");
         setNotes("");
         setFile(null);
         setSigners(blankSigners());
         setFormKey((k) => k + 1);
-        onSent();
+        onCreated(j.id);
       }}
     >
       <h2>Send a lease for signature</h2>
+      <p className="muted">Step 1 of 2. Next you place the signature, date and other boxes on the lease.</p>
       <label className="esign-field">
         <span>Lease title</span>
         <input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Murry Trail Upstairs Lease, Nov 2026 to Feb 2027" />
@@ -244,7 +291,7 @@ function NewEnvelope({ properties, onSent }: { properties: string[]; onSent: () 
         <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
       <button className="btn btn-primary" disabled={busy}>
-        {busy ? "Sending…" : "Send for signature"}
+        {busy ? "Uploading…" : "Next: place the boxes"}
       </button>
       {msg && (
         <p role="status" className={msg.ok ? "esign-ok" : "esign-err"}>
@@ -255,10 +302,10 @@ function NewEnvelope({ properties, onSent }: { properties: string[]; onSent: () 
   );
 }
 
-function EnvelopeCard({ env, onChange }: { env: Envelope; onChange: () => void }) {
+function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () => void; onEdit: () => void }) {
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
-  const act = async (action: "resend" | "void") => {
+  const act = async (action: "resend" | "void" | "drive") => {
     if (action === "void" && !confirm("Void this lease? The signing links stop working.")) return;
     setBusy(action);
     setMsg("");
@@ -269,10 +316,17 @@ function EnvelopeCard({ env, onChange }: { env: Envelope; onChange: () => void }
     });
     const j = await r.json().catch(() => ({}));
     setBusy("");
-    setMsg(r.ok ? (action === "resend" ? "Email sent." : "Voided.") : j.error || "Failed.");
+    setMsg(r.ok ? ({ resend: "Email sent.", void: "Voided.", drive: "Saved to Google Drive." } as const)[action] : j.error || "Failed.");
     onChange();
   };
-  const badge = env.status === "completed" ? "Completed" : env.status === "voided" ? "Voided" : `Waiting on ${env.signers[env.current]?.name}`;
+  const badge =
+    env.status === "completed"
+      ? "Completed"
+      : env.status === "voided"
+        ? "Voided"
+        : env.status === "draft"
+          ? "Draft, not sent"
+          : `Waiting on ${env.signers[env.current]?.name}`;
 
   return (
     <li className="esign-card">
@@ -304,12 +358,27 @@ function EnvelopeCard({ env, onChange }: { env: Envelope; onChange: () => void }
             Download signed copy
           </a>
         )}
-        {env.status !== "voided" && (
+        {env.status === "draft" && (
+          <button className="btn btn-primary" onClick={onEdit}>
+            Place boxes and send
+          </button>
+        )}
+        {env.status === "completed" &&
+          (env.driveLink ? (
+            <a className="btn btn-ghost" href={env.driveLink} target="_blank" rel="noreferrer">
+              Open in Google Drive
+            </a>
+          ) : (
+            <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("drive")}>
+              {busy === "drive" ? "Saving…" : "Save to Google Drive"}
+            </button>
+          ))}
+        {(env.status === "in_progress" || env.status === "completed") && (
           <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("resend")}>
             {busy === "resend" ? "Sending…" : env.status === "completed" ? "Re-email signed copy to all" : "Resend email"}
           </button>
         )}
-        {env.status === "in_progress" && (
+        {(env.status === "in_progress" || env.status === "draft") && (
           <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("void")}>
             Void
           </button>

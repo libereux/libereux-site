@@ -5,14 +5,15 @@ Private tool for James and Sharo at `/admin/leases`. Not linked from the site, n
 ## How it works
 
 1. Sign in at libereux.com/admin/leases with an allowed email. You get a one-time link (15 minutes), then stay signed in for 30 days.
-2. Fill in the title, property, the final lease PDF and the signing order (default: tenants, then Sharo, then James). Press Send.
-3. Each signer gets an email with a personal link only when it is their turn. They read the lease, type their name, draw or type a signature, and agree to sign electronically.
-4. When the last person signs, the site builds the completed PDF: the original pages (stamped with the envelope ID, form fields locked), a signature page, and a certificate with the document fingerprint and the full audit trail. Everyone gets it by email as an attachment.
-5. Every lease, its status, original and signed copy stay on the dashboard.
+2. Fill in the title, property, the final lease PDF and the signing order (default: tenants, then Sharo, then James). Press "Next: place the boxes". The lease is saved as a draft.
+3. Place the boxes: pick whose box it is (each signer has a colour), pick the box type (signature, initials, date signed, full name, text, number, checkbox), then click the page. Drag to move, drag the corner to resize, Delete to remove. It saves as you go. Every signer needs at least one signature box. Press "Send for signature".
+4. Each signer gets an email with a personal link only when it is their turn. They set up a signature once (drawn or typed), then tap each orange box. "Sign next box" walks them through on a phone. Date and name boxes fill themselves. Earlier signers' entries show in grey.
+5. When the last person signs, the site builds the completed PDF: the original pages with every box filled in where it was placed (stamped with the envelope ID, form fields locked), a signature page, and a certificate with the document fingerprint and the full audit trail. Everyone gets it by email as an attachment.
+6. Every lease, its status, original and signed copy stay on the dashboard.
 
 ## Settings
 
-- `ADMIN_EMAILS` (optional): comma-separated emails allowed to sign in. Default `holdings@libereux.com,jetblack56@gmail.com`. Add Sharo's email here to give her dashboard access.
+- `ADMIN_EMAILS` (optional): comma-separated emails allowed to sign in. Default `holdings@libereux.com,jetblack56@gmail.com,sharocollins@gmail.com`.
 - `RESEND_API_KEY`: already set for the contact form; the same key sends signing emails.
 - `ESIGN_FROM` (optional): sender, default the contact form sender.
 
@@ -20,7 +21,15 @@ Private tool for James and Sharo at `/admin/leases`. Not linked from the site, n
 
 Netlify Blobs (store `esign`), free on the current plan. Files are private and only reachable through the signed-in dashboard or a signer's personal link. Running cost: $0.
 
-Back up signed leases: download each completed copy to Google Drive. Blobs has no automatic backup.
+## Google Drive
+
+Completed leases save automatically to a Drive folder named "Libereux Signed Leases" once Drive is connected. One-time setup in the existing Google Cloud project ("Libereux Website", holdings@libereux.com):
+
+1. APIs and Services, Library: enable **Google Drive API**.
+2. APIs and Services, Credentials, the existing OAuth client: add the authorized redirect URI `https://libereux.com/api/esign/drive`.
+3. On the dashboard, press **Connect Google Drive** and allow access as holdings@libereux.com.
+
+The permission is `drive.file`: the site can only see files it created. A lease signed before Drive was connected has a "Save to Google Drive" button.
 
 ## Local testing
 
