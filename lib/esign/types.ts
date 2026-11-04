@@ -63,8 +63,37 @@ export type Envelope = {
   fields?: Field[];
   driveFileId?: string;
   driveLink?: string;
+  lease?: LeaseTerms; // feeds the property calendar
+  source?: "signed_here" | "imported"; // imported = a lease signed elsewhere, uploaded for the records
   events: EnvelopeEvent[];
 };
+
+// Dates are calendar days (YYYY-MM-DD). "end" is the last night the tenant is in the property.
+export type LeaseTerms = { tenants: string; start: string; end: string; rent?: number };
+
+export type BookingSource = "Direct" | "Airbnb" | "VRBO" | "Booking.com" | "Furnished Finder" | "Other";
+export const BOOKING_SOURCES: BookingSource[] = ["Direct", "Airbnb", "VRBO", "Booking.com", "Furnished Finder", "Other"];
+
+// A stay entered by hand (a guest who booked directly without a lease, or a platform booking
+// whose details we want to keep). "end" is the checkout day, like the platforms use.
+export type Booking = {
+  id: string;
+  property: string;
+  start: string;
+  end: string;
+  guest: string;
+  source: BookingSource;
+  phone?: string;
+  email?: string;
+  amount?: number;
+  notes?: string;
+  createdAt: string;
+  createdBy: string;
+};
+
+export type CalendarFeed = { property: string; source: BookingSource; url: string };
+
+export const isDay = (s: unknown): s is string => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s));
 
 export const PROPERTIES = [
   "2098 Murry Trail, Morrow, GA 30260 (Upstairs)",

@@ -1,7 +1,7 @@
 // Lease dashboard data. GET lists every envelope. POST uploads a lease PDF, sets the signing order,
 // and saves it as a draft so fields can be placed before it is sent.
 import { adminFrom, clientIp, sameOrigin } from "@/lib/esign/auth";
-import { createEnvelope, listEnvelopes } from "@/lib/esign/envelopes";
+import { cleanLease, createEnvelope, listEnvelopes } from "@/lib/esign/envelopes";
 import { driveAvailable, driveConfig } from "@/lib/esign/drive";
 import { pageCount } from "@/lib/esign/pdf";
 import { PROPERTIES, type Envelope } from "@/lib/esign/types";
@@ -68,6 +68,13 @@ export async function POST(req: Request) {
   const bad = signers.find((s) => !s.name || !validEmail(s.email));
   if (bad) return Response.json({ error: `Each signer needs a name and a valid email (check "${bad.name || bad.email}").` }, { status: 400 });
 
+  const tenantNames = signers.filter((s) => /tenant/i.test(s.role)).map((s) => s.name);
+  const lease = cleanLease(
+    { start: form.get("start"), end: form.get("end"), rent: form.get("rent"), tenants: tenantNames.join(" and ") },
+    tenantNames.join(" and ") || signers[0].name,
+  );
+  if (typeof lease === "string") return Response.json({ error: lease }, { status: 400 });
+
   const pdf = new Uint8Array(await file.arrayBuffer());
   if (Buffer.from(pdf.slice(0, 5)).toString() !== "%PDF-") return Response.json({ error: "That file is not a PDF." }, { status: 400 });
   let pages = 0;
@@ -86,6 +93,7 @@ export async function POST(req: Request) {
     pdf,
     pages,
     signers,
+    lease,
     ip: clientIp(req),
   });
   return Response.json({ ok: true, id: env.id });

@@ -38,3 +38,14 @@ The permission is `drive.file`: the site can only see files it created. A lease 
 ## Next layers
 
 Property and tenant records, booking calendar per property with Airbnb and VRBO calendar feeds, lease generator from the template.
+
+## Property calendar
+
+The dashboard opens on the Calendar tab: one row per property, with every stay as a bar.
+
+- **Leases** appear from their move-in and last-night dates (entered when sending, or with "Add dates" on any lease). Striped orange while waiting for signatures, solid navy once signed.
+- **Leases signed elsewhere**: Leases tab, "Add a lease that was already signed". Upload the signed PDF with the tenants, dates and rent. It joins the records, the calendar and Google Drive.
+- **Airbnb, VRBO and similar**: paste each listing's calendar export link under "Airbnb and VRBO calendar links". The platforms refresh these links every few hours. They show dates and the confirmation code, not guest names. Dates you blocked on the platform are hidden unless you tick "Show dates blocked on the platforms".
+- **Stays entered by hand**: "Add a stay by hand" for a guest who booked directly without a lease.
+- **Double bookings**: two real stays on the same property on the same night show a red warning at the top.
+- **Google Calendar or phone**: "See this calendar in Google Calendar" gives a private link to add under Other calendars, From URL. Anyone with the link can see the stays; "Replace link" retires it.

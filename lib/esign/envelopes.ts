@@ -4,7 +4,7 @@ import { newId, newToken, sha256 } from "./auth";
 import { buildSignedPdf, eastern } from "./pdf";
 import { button, escape, layout, sendEmail } from "./email";
 import { driveConfig, uploadToDrive } from "./drive";
-import { FIELD_TYPES, type Envelope, type EnvelopeEvent, type Field, type Signer } from "./types";
+import { FIELD_TYPES, isDay, type Envelope, type EnvelopeEvent, type Field, type LeaseTerms, type Signer } from "./types";
 
 const envKey = (id: string) => `envelopes/${id}.json`;
 const fileKey = (id: string, name: string) => `files/${id}/${name}`;
@@ -39,6 +39,7 @@ export async function createEnvelope(input: {
   pdf: Uint8Array;
   pages: number;
   signers: { name: string; email: string; role: string }[];
+  lease?: LeaseTerms;
   ip: string;
 }): Promise<Envelope> {
   const id = newId();
@@ -57,9 +58,70 @@ export async function createEnvelope(input: {
     current: 0,
     signers: input.signers.map((s) => ({ ...s, status: "waiting", tokenHash: "" }) as Signer),
     fields: [],
+    lease: input.lease,
+    source: "signed_here",
     events: [],
   };
   log(env, { type: "Created", actor: input.createdBy, ip: input.ip, detail: `${input.originalName}, SHA-256 ${env.originalSha256}` });
+  await saveEnvelope(env);
+  return env;
+}
+
+export function cleanLease(raw: Record<string, unknown>, fallbackTenants: string): LeaseTerms | undefined | string {
+  const start = String(raw.start || "");
+  const end = String(raw.end || "");
+  if (!start && !end) return undefined;
+  if (!isDay(start) || !isDay(end)) return "Enter both lease dates.";
+  if (end < start) return "The lease end date is before the start date.";
+  const rent = Number(String(raw.rent || "").replace(/[$,\s]/g, ""));
+  return {
+    tenants: String(raw.tenants || "").trim().slice(0, 160) || fallbackTenants,
+    start,
+    end,
+    rent: rent > 0 && rent < 1_000_000 ? rent : undefined,
+  };
+}
+
+// Adds a lease that was signed somewhere else (paper, another e-sign service) to the records,
+// so it sits in the same list and feeds the calendar.
+export async function importSignedLease(input: {
+  title: string;
+  property: string;
+  notes?: string;
+  createdBy: string;
+  originalName: string;
+  pdf: Uint8Array;
+  pages: number;
+  tenants: string[];
+  signedOn?: string;
+  lease: LeaseTerms;
+  ip: string;
+}): Promise<Envelope> {
+  const id = newId();
+  await kv().setBytes(fileKey(id, "original.pdf"), input.pdf);
+  await kv().setBytes(fileKey(id, "signed.pdf"), input.pdf);
+  const signedAt = input.signedOn ? new Date(`${input.signedOn}T12:00:00Z`).toISOString() : now();
+  const env: Envelope = {
+    id,
+    title: input.title,
+    property: input.property,
+    notes: input.notes,
+    createdAt: now(),
+    createdBy: input.createdBy,
+    status: "completed",
+    completedAt: signedAt,
+    originalSha256: sha256(input.pdf),
+    signedSha256: sha256(input.pdf),
+    originalName: input.originalName,
+    pages: input.pages,
+    current: input.tenants.length,
+    signers: input.tenants.map((name) => ({ name, email: "", role: "Tenant", status: "signed", signedAt, tokenHash: "" }) as Signer),
+    fields: [],
+    lease: input.lease,
+    source: "imported",
+    events: [],
+  };
+  log(env, { type: "Imported signed lease", actor: input.createdBy, ip: input.ip, detail: `${input.originalName}, signed outside this site, SHA-256 ${env.originalSha256}` });
   await saveEnvelope(env);
   return env;
 }
@@ -232,7 +294,7 @@ export async function sendCompleted(env: Envelope, signed: Uint8Array) {
 <p>Signed by: ${env.signers.map((s) => `${escape(s.typedName || s.name)} (${escape(s.role)}, ${escape(eastern(s.signedAt))})`).join("; ")}.</p>
 <p>The last pages are the signature page and a certificate with the audit trail.</p>`);
   const res = await sendEmail({
-    to: env.signers.map((s) => s.email),
+    to: env.signers.map((s) => s.email).filter(Boolean),
     subject: `Completed: ${env.title}`,
     html,
     attachments: [{ filename, content: Buffer.from(signed).toString("base64") }],
