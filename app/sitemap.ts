@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/services", 0.9],
     ["/contact", 0.8],
     ["/website-check", 0.8],
+    ["/ai-money-map", 0.7],
     ...(pricingPublic ? ([["/packages", 0.9]] as [string, number][]) : []),
     ["/how-it-works", 0.7],
     ["/about", 0.6],
