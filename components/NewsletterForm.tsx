@@ -48,7 +48,8 @@ export default function NewsletterForm({ mode = "subscribe", source = "ai-money-
   }
 
   return (
-    <form className="form" onSubmit={onSubmit}>
+    // data-form-name puts the Netlify form name in the page HTML; the weekly Money Map task looks for it there.
+    <form className="form" onSubmit={onSubmit} data-form-name={mode === "subscribe" ? "ai-money-map-subscribe" : "ai-money-map-unsubscribe"}>
       <div className="field">
         <label htmlFor={`nl-email-${mode}`}>Your email</label>
         <input
