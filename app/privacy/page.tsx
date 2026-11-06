@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           { href: "/privacy", label: "Privacy policy" },
         ]}
         title="Privacy policy"
-        lede="Last updated October 24, 2026."
+        lede="Last updated November 6, 2026."
       />
       <section className="section">
         <div className="wrap">
@@ -56,6 +56,14 @@ export default function PrivacyPage() {
             <p className="muted">
               When you run the website check, our server visits the public address you enter, reads that one page
               and shows you the results. We do not store the address or the results.
+            </p>
+
+            <h2>The AI Money Map newsletter</h2>
+            <p className="muted">
+              When you subscribe to the AI Money Map, we collect your email address and the date you signed up.
+              We use it to send the weekly newsletter, which also includes news about Libereux Digital Solutions.
+              Every email has an unsubscribe link, and you can also unsubscribe at libereux.com/unsubscribe. We keep
+              your email until you unsubscribe and do not sell it.
             </p>
 
             <h2>How we use it</h2>

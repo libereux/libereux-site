@@ -39,6 +39,7 @@ export default function Footer() {
             <ul>
               <li><Link href="/about">About</Link></li>
               <li><Link href="/how-it-works">How it works</Link></li>
+              <li><Link href="/ai-money-map">AI Money Map newsletter</Link></li>
               <li><Link href="/contact">Contact</Link></li>
               <li><Link href="/privacy">Privacy policy</Link></li>
               <li><Link href="/terms">Terms of service</Link></li>
