@@ -46,7 +46,7 @@ export default function RealEstatePage() {
           <div className="esign-card esign-portal">
             <div>
               <h2>Owner and property manager portal</h2>
-              <p className="muted">Leases, signatures and the property calendar. For Libereux staff only.</p>
+              <p className="muted">Leases, documents for signature and the property calendar. For Libereux staff only.</p>
             </div>
             <a className="btn btn-primary" href="/admin/leases" rel="nofollow">
               Sign in

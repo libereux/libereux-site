@@ -1,8 +1,9 @@
 // The signer's side. GET loads what they are signing (and logs the first view).
-// POST records their signature, then emails the next person in the order or finishes the lease.
+// POST records their signature, then emails the next person in the order or finishes the envelope.
 import { baseUrl, clientIp, limited, sameOrigin } from "@/lib/esign/auth";
 import { fromToken, log, recordSignature, saveEnvelope, now } from "@/lib/esign/envelopes";
 import { fieldText } from "@/lib/esign/pdf";
+import { kindOf, nounOf } from "@/lib/esign/types";
 
 export const maxDuration = 30;
 
@@ -18,6 +19,7 @@ export async function GET(req: Request) {
     await saveEnvelope(env);
   }
   return Response.json({
+    kind: kindOf(env),
     title: env.title,
     property: env.property,
     pages: env.pages,
@@ -75,7 +77,7 @@ export async function POST(req: Request) {
   const found = await fromToken(String(body.t || ""));
   if (!found) return Response.json({ error: "This signing link is not valid." }, { status: 404 });
   const { env, idx, signer } = found;
-  if (env.status !== "in_progress") return Response.json({ error: "This lease is no longer open for signing." }, { status: 400 });
+  if (env.status !== "in_progress") return Response.json({ error: `This ${nounOf(env)} is no longer open for signing.` }, { status: 400 });
   if (signer.status === "signed") return Response.json({ error: "You have already signed." }, { status: 400 });
   if (env.current !== idx) return Response.json({ error: "It is not your turn to sign yet." }, { status: 400 });
   if (!body.consent || !body.reviewed) return Response.json({ error: "Please tick both boxes to continue." }, { status: 400 });

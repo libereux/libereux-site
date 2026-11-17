@@ -1,4 +1,4 @@
-// Lets a signer view the lease they were sent, and download the completed copy once everyone has signed.
+// Lets a signer view the lease or document they were sent, and download the completed copy once everyone has signed.
 import { fromToken, getFile } from "@/lib/esign/envelopes";
 
 export async function GET(req: Request) {
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   return new Response(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename="lease${kind === "signed" ? "_signed" : ""}.pdf"`,
+      "Content-Disposition": `inline; filename="${env.kind === "document" ? "document" : "lease"}${kind === "signed" ? "_signed" : ""}.pdf"`,
       "Cache-Control": "private, no-store",
       "X-Robots-Tag": "noindex",
     },

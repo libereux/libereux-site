@@ -1,4 +1,4 @@
-// Builds the completed lease: the original pages with an envelope stamp, a signature page,
+// Builds the completed lease or document: the original pages with an envelope stamp, a signature page,
 // and a certificate of completion (document fingerprint plus the full audit trail).
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import type { Envelope, Field } from "./types";
@@ -148,7 +148,7 @@ export async function buildSignedPdf(
     page.drawRectangle({ x: 0, y: H - 8, width: W, height: 8, color: ORANGE });
     page.drawText("Libereux Holdings, LLC", { x: M, y: H - 50, size: 13, font: bold, color: NAVY });
     page.drawText(safe(title), { x: M, y: H - 80, size: 20, font: bold, color: INK });
-    page.drawText(safe(`${env.title} | ${env.property}`), { x: M, y: H - 100, size: 10, font: helv, color: STEEL, maxWidth: W - 2 * M });
+    page.drawText(safe([env.title, env.property].filter(Boolean).join(" | ")), { x: M, y: H - 100, size: 10, font: helv, color: STEEL, maxWidth: W - 2 * M });
     page.drawText(safe(`Envelope ID ${env.id}`), { x: M, y: H - 114, size: 10, font: helv, color: STEEL });
     return H - 140;
   };
@@ -255,6 +255,6 @@ export async function buildSignedPdf(
   }
 
   doc.setTitle(safe(`${env.title} (signed)`));
-  doc.setProducer("Libereux Holdings lease signing");
+  doc.setProducer("Libereux Holdings electronic signing");
   return doc.save();
 }

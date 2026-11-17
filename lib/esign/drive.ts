@@ -1,12 +1,14 @@
-// Saves completed leases to Google Drive (holdings@libereux.com), in a folder the site creates.
+// Saves completed leases and documents to Google Drive (holdings@libereux.com), in folders the site creates.
 // Uses the Google Cloud project already set up for booking, with the narrow "drive.file" permission:
 // the site can only see files it created, nothing else in the Drive. Connect once from the dashboard.
 import { kv, platformFetch } from "./store";
-import type { Envelope } from "./types";
+import { kindOf, type Envelope } from "./types";
 
 const CONFIG = "config/drive.json";
-const FOLDER_NAME = "Libereux Signed Leases";
-type DriveConfig = { refreshToken: string; connectedAt: string; connectedBy: string; folderId?: string };
+const FOLDERS = { lease: "Libereux Signed Leases", document: "Libereux Signed Documents" } as const;
+export const folderName = (env: Envelope) => FOLDERS[kindOf(env)];
+// folderId is the leases folder (kept from before documents existed); docFolderId is the documents folder.
+type DriveConfig = { refreshToken: string; connectedAt: string; connectedBy: string; folderId?: string; docFolderId?: string };
 
 export const driveAvailable = () => Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 export const driveConfig = () => kv().getJSON<DriveConfig>(CONFIG);
@@ -59,22 +61,25 @@ async function token(cfg: DriveConfig) {
   return ((await res.json()) as { access_token: string }).access_token;
 }
 
-async function folder(cfg: DriveConfig, access: string) {
-  if (cfg.folderId) {
-    const r = await platformFetch(`https://www.googleapis.com/drive/v3/files/${cfg.folderId}?fields=id,trashed`, {
+async function folder(cfg: DriveConfig, access: string, env: Envelope) {
+  const slot = kindOf(env) === "lease" ? "folderId" : "docFolderId";
+  const known = cfg[slot];
+  if (known) {
+    const r = await platformFetch(`https://www.googleapis.com/drive/v3/files/${known}?fields=id,trashed`, {
       headers: { Authorization: `Bearer ${access}` },
     });
-    if (r.ok && !((await r.json()) as { trashed?: boolean }).trashed) return cfg.folderId;
+    if (r.ok && !((await r.json()) as { trashed?: boolean }).trashed) return known;
   }
   const r = await platformFetch("https://www.googleapis.com/drive/v3/files?fields=id", {
     method: "POST",
     headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ name: FOLDER_NAME, mimeType: "application/vnd.google-apps.folder" }),
+    body: JSON.stringify({ name: folderName(env), mimeType: "application/vnd.google-apps.folder" }),
   });
   if (!r.ok) throw new Error(`Could not create the Drive folder (${r.status}).`);
-  cfg.folderId = ((await r.json()) as { id: string }).id;
+  const id = ((await r.json()) as { id: string }).id;
+  cfg[slot] = id;
   await kv().setJSON(CONFIG, cfg);
-  return cfg.folderId;
+  return id;
 }
 
 export function signedFileName(env: Envelope) {
@@ -86,12 +91,12 @@ export async function uploadToDrive(env: Envelope, pdf: Uint8Array) {
   const cfg = await driveConfig();
   if (!cfg) throw new Error("Google Drive is not connected yet.");
   const access = await token(cfg);
-  const parent = await folder(cfg, access);
+  const parent = await folder(cfg, access, env);
   const boundary = "lx" + Math.random().toString(36).slice(2);
   const meta = JSON.stringify({
     name: signedFileName(env),
     parents: [parent],
-    description: `${env.property}. Envelope ${env.id}. Signed by ${env.signers.map((s) => s.typedName || s.name).join(", ")}.`,
+    description: `${env.property ? `${env.property}. ` : ""}Envelope ${env.id}. Signed by ${env.signers.map((s) => s.typedName || s.name).join(", ")}.`,
   });
   const head = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/pdf\r\n\r\n`;
   const tail = `\r\n--${boundary}--`;
