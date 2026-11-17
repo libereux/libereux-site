@@ -1,10 +1,10 @@
-// Lease envelopes: create, send in order, record views and signatures, finish and distribute.
+// Envelopes (leases and other documents): create, send in order, record views and signatures, finish and distribute.
 import { kv } from "./store";
 import { newId, newToken, sha256 } from "./auth";
 import { buildSignedPdf, eastern } from "./pdf";
 import { button, escape, layout, sendEmail } from "./email";
-import { driveConfig, uploadToDrive } from "./drive";
-import { FIELD_TYPES, isDay, type Envelope, type EnvelopeEvent, type Field, type LeaseTerms, type Signer } from "./types";
+import { driveConfig, folderName, uploadToDrive } from "./drive";
+import { FIELD_TYPES, isDay, kindOf, nounOf, type Envelope, type EnvelopeKind, type EnvelopeEvent, type Field, type LeaseTerms, type Signer } from "./types";
 
 const envKey = (id: string) => `envelopes/${id}.json`;
 const fileKey = (id: string, name: string) => `files/${id}/${name}`;
@@ -30,7 +30,11 @@ export function log(env: Envelope, e: Omit<EnvelopeEvent, "at">) {
   env.events.push({ at: now(), ...e });
 }
 
+// "Murry Trail Lease for 2098 Murry Trail..." for a lease, " (Private AI Venture)" or nothing for a document.
+const forWhat = (env: Envelope) => (!env.property ? "" : kindOf(env) === "lease" ? ` for ${escape(env.property)}` : ` (${escape(env.property)})`);
+
 export async function createEnvelope(input: {
+  kind?: EnvelopeKind;
   title: string;
   property: string;
   notes?: string;
@@ -46,6 +50,7 @@ export async function createEnvelope(input: {
   await kv().setBytes(fileKey(id, "original.pdf"), input.pdf);
   const env: Envelope = {
     id,
+    kind: input.kind || "lease",
     title: input.title,
     property: input.property,
     notes: input.notes,
@@ -103,6 +108,7 @@ export async function importSignedLease(input: {
   const signedAt = input.signedOn ? new Date(`${input.signedOn}T12:00:00Z`).toISOString() : now();
   const env: Envelope = {
     id,
+    kind: "lease",
     title: input.title,
     property: input.property,
     notes: input.notes,
@@ -155,7 +161,7 @@ export function cleanFields(env: Envelope, raw: unknown): Field[] {
   });
 }
 
-// Every signer needs somewhere to sign before the lease can go out.
+// Every signer needs somewhere to sign before the envelope can go out.
 export function missingSignatureFields(env: Envelope) {
   return env.signers.filter((_, i) => !(env.fields || []).some((f) => f.signer === i && f.type === "signature"));
 }
@@ -180,10 +186,10 @@ export async function inviteCurrent(env: Envelope, origin: string, actor: string
   const earlier = env.signers.slice(0, env.current).filter((x) => x.status === "signed");
   const html = layout(`
 <p>Hello ${escape(s.name)},</p>
-<p>Your lease is ready for your signature: <strong>${escape(env.title)}</strong> for ${escape(env.property)}.</p>
+<p>Your ${nounOf(env)} is ready for your signature: <strong>${escape(env.title)}</strong>${forWhat(env)}.</p>
 ${earlier.length ? `<p>Already signed by: ${earlier.map((x) => escape(x.name)).join(", ")}.</p>` : ""}
 <p>Please read it in full, then sign on your phone or computer. It takes about two minutes.</p>
-${button(link, "Review and sign the lease")}
+${button(link, `Review and sign the ${nounOf(env)}`)}
 <p>This link is personal to you. Please do not forward it. Questions? Reply to this email or call (678) 463-0804.</p>`);
   const sent = await sendEmail({ to: [s.email], subject: `Please sign: ${env.title}`, html });
   if (!sent.ok) {
@@ -274,7 +280,7 @@ export async function saveToDrive(env: Envelope, signed: Uint8Array) {
     const file = await uploadToDrive(env, signed);
     env.driveFileId = file.id;
     env.driveLink = file.webViewLink;
-    log(env, { type: "Saved to Google Drive", actor: "System", detail: "Libereux Signed Leases folder" });
+    log(env, { type: "Saved to Google Drive", actor: "System", detail: `${folderName(env)} folder` });
     await saveEnvelope(env);
     return { ok: true };
   } catch (e) {
@@ -287,10 +293,10 @@ export async function saveToDrive(env: Envelope, signed: Uint8Array) {
 }
 
 export async function sendCompleted(env: Envelope, signed: Uint8Array) {
-  const filename = `${env.title.replace(/[^A-Za-z0-9 _-]+/g, "").trim().replace(/\s+/g, "_") || "Lease"}_signed.pdf`;
+  const filename = `${env.title.replace(/[^A-Za-z0-9 _-]+/g, "").trim().replace(/\s+/g, "_") || (kindOf(env) === "lease" ? "Lease" : "Document")}_signed.pdf`;
   const html = layout(`
 <p>Hello,</p>
-<p>Everyone has signed <strong>${escape(env.title)}</strong> for ${escape(env.property)}. The completed copy is attached for your records.</p>
+<p>Everyone has signed <strong>${escape(env.title)}</strong>${forWhat(env)}. The completed copy is attached for your records.</p>
 <p>Signed by: ${env.signers.map((s) => `${escape(s.typedName || s.name)} (${escape(s.role)}, ${escape(eastern(s.signedAt))})`).join("; ")}.</p>
 <p>The last pages are the signature page and a certificate with the audit trail.</p>`);
   const res = await sendEmail({

@@ -1,5 +1,5 @@
-// Admin sign-in for the lease tool. POST sends a one-time link to an allow-listed email.
-// GET (the link) sets a 30-day session cookie and opens the lease dashboard.
+// Admin sign-in for the signing portal. POST sends a one-time link to an allow-listed email.
+// GET (the link) sets a 30-day session cookie and opens the dashboard.
 import { adminEmails, baseUrl, limited, clientIp, makeSession, newToken, sameOrigin, sessionCookie, sha256 } from "@/lib/esign/auth";
 import { kv } from "@/lib/esign/store";
 import { button, layout, sendEmail } from "@/lib/esign/email";
@@ -20,8 +20,8 @@ export async function POST(req: Request) {
     const link = `${baseUrl(req)}/api/esign/login?t=${token}`;
     await sendEmail({
       to: [email],
-      subject: "Your sign-in link for Libereux leases",
-      html: layout(`<p>Use this link to open the lease dashboard. It works once and expires in 15 minutes.</p>${button(link, "Open the lease dashboard")}<p>If you did not ask for this, ignore this email.</p>`),
+      subject: "Your sign-in link for the Libereux portal",
+      html: layout(`<p>Use this link to open the Libereux portal. It works once and expires in 15 minutes.</p>${button(link, "Open the portal")}<p>If you did not ask for this, ignore this email.</p>`),
     });
   }
   return Response.json({ ok: true });

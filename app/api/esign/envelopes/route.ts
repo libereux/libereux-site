@@ -1,6 +1,6 @@
-// Lease dashboard data. GET lists every envelope. POST uploads a lease PDF, sets the signing order,
-// and saves it as a draft so fields can be placed before it is sent.
-import { adminFrom, clientIp, sameOrigin } from "@/lib/esign/auth";
+// Dashboard data. GET lists every envelope this admin may see. POST uploads a lease or another document
+// (an NDA, an agreement), sets the signing order, and saves it as a draft so fields can be placed first.
+import { adminFrom, canSee, canSeeDocuments, clientIp, sameOrigin } from "@/lib/esign/auth";
 import { cleanLease, createEnvelope, listEnvelopes } from "@/lib/esign/envelopes";
 import { driveAvailable, driveConfig } from "@/lib/esign/drive";
 import { pageCount } from "@/lib/esign/pdf";
@@ -29,9 +29,10 @@ export async function GET(req: Request) {
   const [all, drive] = await Promise.all([listEnvelopes(), driveConfig()]);
   return Response.json({
     admin,
+    canDocuments: canSeeDocuments(admin),
     properties: PROPERTIES,
     drive: { available: driveAvailable(), connected: !!drive, connectedAt: drive?.connectedAt },
-    envelopes: all.map(publicView),
+    envelopes: all.filter((e) => canSee(admin, e)).map(publicView),
   });
 }
 
@@ -46,6 +47,9 @@ export async function POST(req: Request) {
   } catch {
     return Response.json({ error: "Could not read the upload. Keep the PDF under 4 MB." }, { status: 400 });
   }
+  const kind = form.get("kind") === "document" ? "document" : "lease";
+  if (kind === "document" && !canSeeDocuments(admin)) return Response.json({ error: "Your account can send leases only." }, { status: 403 });
+  const noun = kind === "lease" ? "lease" : "document";
   const title = clean(form.get("title"), 140);
   const property = clean(form.get("property"), 160);
   const notes = clean(form.get("notes"), 2000);
@@ -60,19 +64,22 @@ export async function POST(req: Request) {
     return Response.json({ error: "Signer list is invalid." }, { status: 400 });
   }
 
-  if (!title) return Response.json({ error: "Give the lease a title." }, { status: 400 });
-  if (!property) return Response.json({ error: "Pick the property." }, { status: 400 });
-  if (!(file instanceof File) || file.size === 0) return Response.json({ error: "Attach the lease PDF." }, { status: 400 });
+  if (!title) return Response.json({ error: `Give the ${noun} a title.` }, { status: 400 });
+  if (kind === "lease" && !property) return Response.json({ error: "Pick the property." }, { status: 400 });
+  if (!(file instanceof File) || file.size === 0) return Response.json({ error: `Attach the ${noun} PDF.` }, { status: 400 });
   if (file.size > 4 * 1024 * 1024) return Response.json({ error: "The PDF is over 4 MB." }, { status: 400 });
   if (signers.length < 1 || signers.length > 8) return Response.json({ error: "Add between 1 and 8 signers." }, { status: 400 });
   const bad = signers.find((s) => !s.name || !validEmail(s.email));
   if (bad) return Response.json({ error: `Each signer needs a name and a valid email (check "${bad.name || bad.email}").` }, { status: 400 });
 
   const tenantNames = signers.filter((s) => /tenant/i.test(s.role)).map((s) => s.name);
-  const lease = cleanLease(
-    { start: form.get("start"), end: form.get("end"), rent: form.get("rent"), tenants: tenantNames.join(" and ") },
-    tenantNames.join(" and ") || signers[0].name,
-  );
+  const lease =
+    kind === "lease"
+      ? cleanLease(
+          { start: form.get("start"), end: form.get("end"), rent: form.get("rent"), tenants: tenantNames.join(" and ") },
+          tenantNames.join(" and ") || signers[0].name,
+        )
+      : undefined;
   if (typeof lease === "string") return Response.json({ error: lease }, { status: 400 });
 
   const pdf = new Uint8Array(await file.arrayBuffer());
@@ -85,11 +92,12 @@ export async function POST(req: Request) {
   }
 
   const env = await createEnvelope({
+    kind,
     title,
     property,
     notes,
     createdBy: admin,
-    originalName: clean(file.name, 160) || "lease.pdf",
+    originalName: clean(file.name, 160) || `${noun}.pdf`,
     pdf,
     pages,
     signers,

@@ -1,6 +1,6 @@
 "use client";
 
-// Place signature, initials, date, name, text, number and checkbox boxes on the lease,
+// Place signature, initials, date, name, text, number and checkbox boxes on the lease or document,
 // one colour per signer, before it goes out. Saves as you go.
 import { useCallback, useEffect, useRef, useState } from "react";
 import PdfPages from "./PdfPages";
@@ -84,7 +84,7 @@ export default function FieldEditor({ id, onClose }: { id: string; onClose: (sen
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  if (!draft) return <p className="muted">Loading the lease…</p>;
+  if (!draft) return <p className="muted">Loading the document…</p>;
 
   const sel = fields.find((f) => f.id === selected) || null;
   const counts = draft.signers.map((_, i) => fields.filter((f) => f.signer === i).length);

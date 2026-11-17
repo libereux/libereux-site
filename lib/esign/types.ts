@@ -45,10 +45,17 @@ export const FIELD_LABELS: Record<FieldType, string> = {
 
 export type EnvelopeEvent = { at: string; type: string; actor: string; ip?: string; detail?: string };
 
+// "lease" feeds the property calendar; "document" is anything else sent for signature (an NDA, an
+// agreement). Envelopes saved before documents existed have no kind and are leases.
+export type EnvelopeKind = "lease" | "document";
+export const kindOf = (e: { kind?: EnvelopeKind }): EnvelopeKind => e.kind || "lease";
+export const nounOf = (e: { kind?: EnvelopeKind }) => (kindOf(e) === "lease" ? "lease" : "document");
+
 export type Envelope = {
   id: string;
+  kind?: EnvelopeKind;
   title: string;
-  property: string;
+  property: string; // for a document: the project or matter it belongs to (optional)
   notes?: string;
   createdAt: string;
   createdBy: string;

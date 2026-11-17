@@ -1,6 +1,6 @@
-# Lease signing (internal)
+# Lease and document signing (internal)
 
-Private tool for James and Sharo at `/admin/leases`. Not linked from the site, not indexed.
+Private tool for James and Sharo at `/admin/leases`. Not linked from the site, not indexed. It sends leases and any other PDF (NDAs, agreements) for signature.
 
 ## How it works
 
@@ -11,8 +11,19 @@ Private tool for James and Sharo at `/admin/leases`. Not linked from the site, n
 5. When the last person signs, the site builds the completed PDF: the original pages with every box filled in where it was placed (stamped with the envelope ID, form fields locked), a signature page, and a certificate with the document fingerprint and the full audit trail. Everyone gets it by email as an attachment.
 6. Every lease, its status, original and signed copy stay on the dashboard.
 
+## Documents (NDAs, agreements, anything that is not a lease)
+
+The **Documents** tab works the same way as leases, with these differences:
+
+- Only the accounts in `DOCUMENT_ADMINS` see the tab, its documents and their files (default `holdings@libereux.com,jetblack56@gmail.com`). Sharo keeps leases and the calendar but never sees documents.
+- No property and no calendar dates. An optional "Project or matter" (for example "Private AI Venture") shows to signers.
+- Default signing order: two other parties, then James Collins for Libereux Holdings, LLC. Change roles, names and order freely.
+- Emails, the signing page and the completed PDF say "document" instead of "lease".
+- Completed documents save to a separate Drive folder, "Libereux Signed Documents".
+
 ## Settings
 
+- `DOCUMENT_ADMINS` (optional): comma-separated emails that can see and send documents. Must also be in `ADMIN_EMAILS`.
 - `ADMIN_EMAILS` (optional): comma-separated emails allowed to sign in. Default `holdings@libereux.com,jetblack56@gmail.com,sharocollins@gmail.com`.
 - `RESEND_API_KEY`: already set for the contact form; the same key sends signing emails.
 - `ESIGN_FROM` (optional): sender, default the contact form sender.

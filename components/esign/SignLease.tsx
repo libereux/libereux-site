@@ -19,6 +19,7 @@ type SignField = {
   filled?: string;
 };
 type Info = {
+  kind?: "lease" | "document";
   title: string;
   property: string;
   pages: number;
@@ -65,9 +66,10 @@ export default function SignLease() {
         {shown} Questions? Call (678) 463-0804.
       </p>
     );
-  if (!info) return <p className="muted">Loading your lease…</p>;
+  if (!info) return <p className="muted">Loading…</p>;
 
   const pdfUrl = `/api/esign/sign/pdf?t=${encodeURIComponent(token)}`;
+  const noun = info.kind === "document" ? "document" : "lease";
 
   if (done) {
     return (
@@ -89,7 +91,7 @@ export default function SignLease() {
           {info.signer.role}: {info.signer.name}
         </p>
         <h2>{info.title}</h2>
-        <p>{info.property}</p>
+        {info.property && <p>{info.property}</p>}
         <ol className="esign-order">
           {info.order.map((o, i) => (
             <li key={i} className={o.signed ? "is-signed" : o.you ? "is-current" : ""}>
@@ -101,7 +103,7 @@ export default function SignLease() {
 
       {info.envelopeStatus === "completed" ? (
         <div className="esign-card">
-          <h2>This lease is fully signed.</h2>
+          <h2>This {noun} is fully signed.</h2>
           <p>
             <a className="btn btn-primary" href={`${pdfUrl}&kind=signed`} target="_blank" rel="noreferrer">
               Open the signed copy
@@ -109,7 +111,7 @@ export default function SignLease() {
           </p>
         </div>
       ) : info.envelopeStatus === "voided" ? (
-        <p className="esign-card">This lease was withdrawn and can no longer be signed. Please contact us at (678) 463-0804.</p>
+        <p className="esign-card">This {noun} was withdrawn and can no longer be signed. Please contact us at (678) 463-0804.</p>
       ) : info.signer.status === "signed" ? (
         <p className="esign-card">You have signed. We will email you the completed copy once everyone has signed.</p>
       ) : !info.yourTurn ? (
@@ -124,6 +126,7 @@ export default function SignLease() {
 function Signing({ info, token, pdfUrl, onDone }: { info: Info; token: string; pdfUrl: string; onDone: (d: { completed: boolean }) => void }) {
   const mine = useMemo(() => info.fields.filter((f) => f.mine).sort((a, b) => a.page - b.page || a.y - b.y || a.x - b.x), [info.fields]);
   const others = info.fields.filter((f) => !f.mine);
+  const noun = info.kind === "document" ? "document" : "lease";
   const [typed, setTyped] = useState(info.signer.name);
   const [mode, setMode] = useState<"draw" | "type">("draw");
   const [drawn, setDrawn] = useState(""); // data URL once adopted
@@ -205,7 +208,7 @@ function Signing({ info, token, pdfUrl, onDone }: { info: Info; token: string; p
       )}
 
       <div className="esign-card">
-        <h2>{mine.length ? "2. Read the lease and fill your boxes" : "2. Read the lease"}</h2>
+        <h2>{mine.length ? `2. Read the ${noun} and fill your boxes` : `2. Read the ${noun}`}</h2>
         <p className="muted">
           {info.pages} pages. Your boxes are outlined in orange.{" "}
           <a href={pdfUrl} target="_blank" rel="noreferrer">
@@ -310,17 +313,17 @@ function Signing({ info, token, pdfUrl, onDone }: { info: Info; token: string; p
         <h2>3. Finish</h2>
         <label className="esign-check">
           <input type="checkbox" checked={reviewed} onChange={(e) => setReviewed(e.target.checked)} />
-          <span>I have read the whole lease and agree to its terms.</span>
+          <span>I have read the whole {noun} and agree to its terms.</span>
         </label>
         <label className="esign-check">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
           <span>
-            I agree to sign electronically and receive this lease electronically. My electronic signature has the same legal effect as
+            I agree to sign electronically and receive this {noun} electronically. My electronic signature has the same legal effect as
             signing on paper. I can ask for a paper copy at any time by emailing holdings@libereux.com.
           </span>
         </label>
         <p className="muted esign-fine">
-          When you press Finish, we record your name, email, the time, and your internet address with the lease. Document fingerprint (SHA-256):{" "}
+          When you press Finish, we record your name, email, the time, and your internet address with the {noun}. Document fingerprint (SHA-256):{" "}
           <code>{info.fingerprint.slice(0, 16)}…</code>
         </p>
         <button className="btn btn-primary" disabled={busy || !reviewed || !consent}>
@@ -464,7 +467,7 @@ function Adopt({
       >
         {adopted ? "Signature ready ✓" : "Use this signature"}
       </button>
-      {adopted && <p className="esign-ok">Now tap each orange &ldquo;Sign here&rdquo; box on the lease below.</p>}
+      {adopted && <p className="esign-ok">Now tap each orange &ldquo;Sign here&rdquo; box on the document below.</p>}
       {err && (
         <p role="alert" className="esign-err">
           {err}

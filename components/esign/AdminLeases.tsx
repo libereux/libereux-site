@@ -14,8 +14,10 @@ type Signer = {
   signedAt?: string;
   typedName?: string;
 };
+type Kind = "lease" | "document";
 type Envelope = {
   id: string;
+  kind?: Kind;
   title: string;
   property: string;
   notes?: string;
@@ -33,7 +35,7 @@ type Envelope = {
   signers: Signer[];
   events: { at: string; type: string; actor: string; ip?: string; detail?: string }[];
 };
-type Data = { admin: string; properties: string[]; drive: { available: boolean; connected: boolean; connectedAt?: string }; envelopes: Envelope[] };
+type Data = { admin: string; canDocuments: boolean; properties: string[]; drive: { available: boolean; connected: boolean; connectedAt?: string }; envelopes: Envelope[] };
 
 const when = (iso?: string) =>
   iso
@@ -47,19 +49,28 @@ const statusLabel: Record<Signer["status"], string> = {
   signed: "Signed",
 };
 
-const blankSigners = () => [
-  { name: "", email: "", role: "Tenant" },
-  { name: "", email: "", role: "Tenant" },
-  { name: "Sharo Hyatt", email: "", role: "Property Manager" },
-  { name: "James Collins", email: "holdings@libereux.com", role: "Landlord" },
-];
+const blankSigners = (kind: Kind) =>
+  kind === "lease"
+    ? [
+        { name: "", email: "", role: "Tenant" },
+        { name: "", email: "", role: "Tenant" },
+        { name: "Sharo Hyatt", email: "", role: "Property Manager" },
+        { name: "James Collins", email: "holdings@libereux.com", role: "Landlord" },
+      ]
+    : [
+        { name: "", email: "", role: "Party" },
+        { name: "", email: "", role: "Party" },
+        { name: "James Collins", email: "holdings@libereux.com", role: "Libereux Holdings, LLC" },
+      ];
+
+const isDoc = (e: { kind?: Kind }) => e.kind === "document";
 
 export default function AdminLeases() {
   const [data, setData] = useState<Data | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
-  const [tab, setTab] = useState<"calendar" | "leases">("calendar");
+  const [tab, setTab] = useState<"calendar" | "leases" | "documents">("calendar");
   const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
@@ -78,7 +89,7 @@ export default function AdminLeases() {
     // Initial fetch of dashboard data from our own API, plus any message from the Drive connection.
     const d = new URLSearchParams(window.location.search).get("drive");
     const notes: Record<string, string> = {
-      connected: "Google Drive is connected. Signed leases will be saved there automatically.",
+      connected: "Google Drive is connected. Signed leases and documents will be saved there automatically.",
       failed: "Google Drive did not connect. Check the setup steps and try again.",
       declined: "Google Drive was not connected because access was not allowed.",
       expired: "That Drive connection attempt expired. Try again.",
@@ -121,6 +132,11 @@ export default function AdminLeases() {
           <button role="tab" aria-selected={tab === "leases"} className={`esign-tab ${tab === "leases" ? "is-on" : ""}`} onClick={() => setTab("leases")}>
             Leases
           </button>
+          {data.canDocuments && (
+            <button role="tab" aria-selected={tab === "documents"} className={`esign-tab ${tab === "documents" ? "is-on" : ""}`} onClick={() => setTab("documents")}>
+              Documents
+            </button>
+          )}
         </div>
       )}
       {!editing && tab === "calendar" ? (
@@ -135,21 +151,35 @@ export default function AdminLeases() {
             window.scrollTo({ top: 0 });
           }}
         />
+      ) : tab === "documents" && data.canDocuments ? (
+        <>
+          <DriveCard drive={data.drive} />
+          <NewEnvelope kind="document" properties={data.properties} onCreated={(id) => setEditing(id)} />
+          <EnvelopeList title="All documents" list={data.envelopes.filter(isDoc)} onChange={load} onEdit={setEditing} />
+        </>
       ) : (
         <>
           <DriveCard drive={data.drive} />
-          <NewEnvelope properties={data.properties} onCreated={(id) => setEditing(id)} />
+          <NewEnvelope kind="lease" properties={data.properties} onCreated={(id) => setEditing(id)} />
           <ImportLease properties={data.properties} onDone={load} />
-          <h2>All leases</h2>
-          {data.envelopes.length === 0 && <p className="muted">Nothing sent yet.</p>}
-          <ul className="esign-list">
-            {data.envelopes.map((e) => (
-              <EnvelopeCard key={e.id} env={e} onChange={load} onEdit={() => setEditing(e.id)} />
-            ))}
-          </ul>
+          <EnvelopeList title="All leases" list={data.envelopes.filter((e) => !isDoc(e))} onChange={load} onEdit={setEditing} />
         </>
       )}
     </div>
+  );
+}
+
+function EnvelopeList({ title, list, onChange, onEdit }: { title: string; list: Envelope[]; onChange: () => void; onEdit: (id: string) => void }) {
+  return (
+    <>
+      <h2>{title}</h2>
+      {list.length === 0 && <p className="muted">Nothing sent yet.</p>}
+      <ul className="esign-list">
+        {list.map((e) => (
+          <EnvelopeCard key={e.id} env={e} onChange={onChange} onEdit={() => onEdit(e.id)} />
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -198,10 +228,15 @@ function Login() {
 }
 
 function DriveCard({ drive }: { drive: Data["drive"] }) {
-  if (drive.connected) return <p className="muted">Google Drive connected: signed leases save to the folder &ldquo;Libereux Signed Leases&rdquo;.</p>;
+  if (drive.connected)
+    return (
+      <p className="muted">
+        Google Drive connected: signed leases save to &ldquo;Libereux Signed Leases&rdquo; and other documents to &ldquo;Libereux Signed Documents&rdquo;.
+      </p>
+    );
   return (
     <div className="esign-card">
-      <h2>Save signed leases to Google Drive</h2>
+      <h2>Save signed copies to Google Drive</h2>
       <p>Connect once, signed in as holdings@libereux.com. The site can only see the files it creates there.</p>
       {drive.available ? (
         <p>
@@ -216,13 +251,15 @@ function DriveCard({ drive }: { drive: Data["drive"] }) {
   );
 }
 
-function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreated: (id: string) => void }) {
+function NewEnvelope({ kind, properties, onCreated }: { kind: Kind; properties: string[]; onCreated: (id: string) => void }) {
+  const lease = kind === "lease";
+  const noun = lease ? "lease" : "document";
   const [title, setTitle] = useState("");
-  const [property, setProperty] = useState(properties[0] || "");
+  const [property, setProperty] = useState(lease ? properties[0] || "" : "");
   const [notes, setNotes] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [signers, setSigners] = useState(blankSigners);
-  const [lease, setLease] = useState({ start: "", end: "", rent: "" });
+  const [signers, setSigners] = useState(() => blankSigners(kind));
+  const [dates, setDates] = useState({ start: "", end: "", rent: "" });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [formKey, setFormKey] = useState(0);
@@ -244,19 +281,22 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
       className="esign-card"
       onSubmit={async (ev) => {
         ev.preventDefault();
-        if (!file) return setMsg({ ok: false, text: "Attach the lease PDF." });
+        if (!file) return setMsg({ ok: false, text: `Attach the ${noun} PDF.` });
         const list = signers.filter((s) => s.name.trim() || s.email.trim());
         setBusy(true);
         setMsg(null);
         const fd = new FormData();
+        fd.set("kind", kind);
         fd.set("title", title);
         fd.set("property", property);
         fd.set("notes", notes);
         fd.set("file", file);
         fd.set("signers", JSON.stringify(list));
-        fd.set("start", lease.start);
-        fd.set("end", lease.end);
-        fd.set("rent", lease.rent);
+        if (lease) {
+          fd.set("start", dates.start);
+          fd.set("end", dates.end);
+          fd.set("rent", dates.rent);
+        }
         const r = await fetch("/api/esign/envelopes", { method: "POST", body: fd });
         const j = await r.json().catch(() => ({}));
         setBusy(false);
@@ -264,28 +304,43 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
         setTitle("");
         setNotes("");
         setFile(null);
-        setSigners(blankSigners());
-        setLease({ start: "", end: "", rent: "" });
+        setSigners(blankSigners(kind));
+        setDates({ start: "", end: "", rent: "" });
         setFormKey((k) => k + 1);
         onCreated(j.id);
       }}
     >
-      <h2>Send a lease for signature</h2>
-      <p className="muted">Step 1 of 2. Next you place the signature, date and other boxes on the lease.</p>
+      <h2>Send a {noun} for signature</h2>
+      <p className="muted">
+        Step 1 of 2. Next you place the signature, date and other boxes on the {noun}.
+        {!lease && " Use this for NDAs, agreements and anything else that is not a lease. Only James's accounts can see documents."}
+      </p>
       <label className="esign-field">
-        <span>Lease title</span>
-        <input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Murry Trail Upstairs Lease, Nov 2026 to Feb 2027" />
+        <span>{lease ? "Lease title" : "Document title"}</span>
+        <input
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder={lease ? "Murry Trail Upstairs Lease, Nov 2026 to Feb 2027" : "Mutual NDA, Private AI Venture"}
+        />
       </label>
+      {lease ? (
+        <label className="esign-field">
+          <span>Property</span>
+          <select value={property} onChange={(e) => setProperty(e.target.value)}>
+            {properties.map((p) => (
+              <option key={p}>{p}</option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        <label className="esign-field">
+          <span>Project or matter (optional, shown to signers)</span>
+          <input value={property} onChange={(e) => setProperty(e.target.value)} placeholder="Private AI Venture" />
+        </label>
+      )}
       <label className="esign-field">
-        <span>Property</span>
-        <select value={property} onChange={(e) => setProperty(e.target.value)}>
-          {properties.map((p) => (
-            <option key={p}>{p}</option>
-          ))}
-        </select>
-      </label>
-      <label className="esign-field">
-        <span>Lease PDF (final version, under 4 MB)</span>
+        <span>{lease ? "Lease" : "Document"} PDF (final version, under 4 MB)</span>
         <input type="file" accept="application/pdf" required onChange={(e) => setFile(e.target.files?.[0] || null)} />
       </label>
       <fieldset className="esign-signers">
@@ -304,30 +359,32 @@ function NewEnvelope({ properties, onCreated }: { properties: string[]; onCreate
             </span>
           </div>
         ))}
-        <button type="button" className="btn btn-ghost" onClick={() => setSigners((x) => [...x, { name: "", email: "", role: "Tenant" }])}>
+        <button type="button" className="btn btn-ghost" onClick={() => setSigners((x) => [...x, { name: "", email: "", role: lease ? "Tenant" : "Party" }])}>
           Add a signer
         </button>
       </fieldset>
+      {lease && (
       <fieldset className="esign-signers">
         <legend>For the calendar</legend>
         <div className="esign-grid">
           <label className="esign-field">
             <span>Move-in</span>
-            <input type="date" value={lease.start} onChange={(e) => setLease({ ...lease, start: e.target.value })} />
+            <input type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} />
           </label>
           <label className="esign-field">
             <span>Last night (lease end)</span>
-            <input type="date" value={lease.end} onChange={(e) => setLease({ ...lease, end: e.target.value })} />
+            <input type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} />
           </label>
           <label className="esign-field">
             <span>Monthly rent</span>
-            <input inputMode="decimal" placeholder="4300" value={lease.rent} onChange={(e) => setLease({ ...lease, rent: e.target.value })} />
+            <input inputMode="decimal" placeholder="4300" value={dates.rent} onChange={(e) => setDates({ ...dates, rent: e.target.value })} />
           </label>
         </div>
         <p className="muted">Shows on the calendar as soon as it is sent, and turns solid once everyone signs.</p>
       </fieldset>
+      )}
       <label className="esign-field">
-        <span>Private notes (only you and Sharo see these)</span>
+        <span>{lease ? "Private notes (only you and Sharo see these)" : "Private notes (only you see these)"}</span>
         <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
       <button className="btn btn-primary" disabled={busy}>
@@ -346,7 +403,7 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
   const act = async (action: "resend" | "void" | "drive") => {
-    if (action === "void" && !confirm("Void this lease? The signing links stop working.")) return;
+    if (action === "void" && !confirm(`Void this ${isDoc(env) ? "document" : "lease"}? The signing links stop working.`)) return;
     setBusy(action);
     setMsg("");
     const r = await fetch("/api/esign/envelope", {
@@ -374,7 +431,7 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
         <div>
           <h3>{env.title}</h3>
           <p className="muted">
-            {env.property} · sent {when(env.createdAt)}
+            {env.property ? `${env.property} · ` : ""}sent {when(env.createdAt)}
             {env.completedAt ? ` · completed ${when(env.completedAt)}` : ""}
           </p>
         </div>
@@ -388,7 +445,7 @@ function EnvelopeCard({ env, onChange, onEdit }: { env: Envelope; onChange: () =
           </li>
         ))}
       </ol>
-      <LeaseDates env={env} onChange={onChange} />
+      {!isDoc(env) && <LeaseDates env={env} onChange={onChange} />}
       {env.notes && <p className="muted">Notes: {env.notes}</p>}
       <div className="btn-row">
         <a className="btn btn-ghost" href={`/api/esign/file?id=${env.id}&kind=original`} target="_blank" rel="noreferrer">

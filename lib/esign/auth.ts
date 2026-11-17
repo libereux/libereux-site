@@ -1,4 +1,4 @@
-// Admin sign-in for the lease tool: email link to an allow-listed address, then a signed cookie.
+// Admin sign-in for the signing portal: email link to an allow-listed address, then a signed cookie.
 // No passwords. The signing key is generated once and kept in private storage, so no secret
 // has to be configured by hand.
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
@@ -14,6 +14,18 @@ export function adminEmails(): string[] {
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
 }
+
+// Documents (NDAs, agreements) can hold business information that is not about the properties, so
+// only these admins see them. Leases and the calendar stay visible to every admin.
+export function documentAdmins(): string[] {
+  const raw = process.env.DOCUMENT_ADMINS || "holdings@libereux.com,jetblack56@gmail.com";
+  return raw
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+}
+export const canSeeDocuments = (admin: string) => documentAdmins().includes(admin.toLowerCase());
+export const canSee = (admin: string, env: { kind?: string }) => (env.kind === "document" ? canSeeDocuments(admin) : true);
 
 export const sha256 = (b: Uint8Array | string) => createHash("sha256").update(b).digest("hex");
 export const newToken = () => randomBytes(32).toString("base64url");
